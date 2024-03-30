@@ -214,7 +214,11 @@ body {
     align-items: center;
 }
 
-
+@media screen and (max-width: 1200px) {
+  .Seminar_inner {
+    grid-template-columns: repeat(auto-fill, 350px);
+  }
+}
 
 
   .image1 {
@@ -318,6 +322,12 @@ body {
     width: 100%;
     height: 100%;
     object-fit: cover;
+  }
+
+  @media screen and (max-width: 1200px) {
+    .Gallery_inner {
+      width: 85%;
+    }
   }
 
   .imageA {
