@@ -34,8 +34,7 @@
 .background6 {
     width: 500px;
     height: 250px;
-    background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQFjc6X-Gs9T6SHCcy_gpfJ56QhnvuKv3y5qrPQ27MxNHqCYhhhsnmG6QI5JApL6VywiY&usqp=CAU");
-    background-position: center;
+    background: center url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQFjc6X-Gs9T6SHCcy_gpfJ56QhnvuKv3y5qrPQ27MxNHqCYhhhsnmG6QI5JApL6VywiY&usqp=CAU");
 }
 
 .border1 {
@@ -48,15 +47,15 @@
 }
 
 .border3 {
-    border-left: solid;
+    border-left: medium dashed green;
 }
 
 .border4 {
-    border-right: solid;
+    border-right: 2px dotted green;
 }
 
 .border5 {
-    border-top: solid;
+    border-top: 5px solid greenyellow;
 }
 
 .border6 {
@@ -64,12 +63,12 @@
 }
 
 .border7 {
-    border-top: solid;
-    border-width: thick;
+    border: solid red;
+    border-width: 2px 10px;
 }
 
 .border8 {
-    border: solid
+    border: medium dashed green;
 }
 
 .color1 {
@@ -164,7 +163,7 @@
 }
 
 .margin5 {
-    margin: 50px 50px 50px;
+    margin: 50px;
 }
 
 .padding1 {
@@ -187,7 +186,8 @@
     padding: 1px 2px 1px;
 }
 
-.test013 {
+.test0013 {
+    height: 30px;
     overflow: auto;
 }
 
@@ -266,7 +266,7 @@
     color: blue;
 }
 
-.test026 p:first-of-type {
+.test026 :first-of-type {
     color: brown;
 }
 
@@ -287,12 +287,12 @@
 }
 
 /*PseudoElements*/
-.test031 p::after {
+.test031 ::after {
     content: "after";
     color: red;
 }
 
-.test032 p::before {
+.test032 ::before {
     content: "before";
     color: blue;
 }
