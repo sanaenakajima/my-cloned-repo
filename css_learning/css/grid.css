@@ -195,56 +195,21 @@ body {
     background-color: paleturquoise;
     height: 700px;
   }
-
   .Section_Seminar img {
-    width: 350px;
-    height: 190px;
-    object-fit: cover;
-  
+    width: 100%;
+    height: 100%;
   }
 
-  .Seminar_inner {
-    display: grid;
-    grid-template-columns: repeat(3, 350px);
     
-
-    column-gap: 5px;
-    row-gap: 5px;
-    justify-content: center;
-    align-items: center;
-}
-
-@media screen and (max-width: 1200px) {
-  .Section_Seminar {
-    background-color: paleturquoise;
-    height: 900px;
-  }
   .Seminar_inner {
-    grid-template-columns: repeat(2, 350px);;
+    max-width: 1080px;
+    margin: 0 auto;
   }
-}
-
-@media screen and (max-width: 600px) {
-  .Section_Seminar {
-    background-color: paleturquoise;
-    height: 1150px;
-  }
-  .Seminar_inner {
-    grid-template-columns: repeat(1, 1fr);
-    justify-items: center;  
-  }
-  .Section_Seminar img {
-    width: 300px;
-    height: 160px;
-    object-fit: cover;
-  
-  }
-}
-
 
   .image1 {
     position: relative;
     object-fit:cover
+    grid-area: img1;
   }
   .image1 p {
     position: absolute;
@@ -256,6 +221,7 @@ body {
 
   .image2 {
     position: relative;
+    grid-area: img2;
   }
   .image2 p {
     position: absolute;
@@ -267,6 +233,7 @@ body {
   
   .image3 {
     position: relative;
+    grid-area: img3;
   }
   .image3 p {
     position: absolute;
@@ -278,6 +245,7 @@ body {
   
   .image4 {
     position: relative;
+    grid-area: img4;
   }
   .image4 p {
     position: absolute;
@@ -289,6 +257,7 @@ body {
 
   .image5 {
     position: relative;
+    grid-area: img5;
   }
   .image5 p {
     position: absolute;
@@ -297,6 +266,53 @@ body {
     margin: 10%;
     color: white;
   }
+
+  .Seminar_container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 200px);
+        grid-template-areas:
+      "img1 img2 img3"
+      "img4 img5  .";
+    gap: 5px;
+    margin: 0 auto;
+    width: 95%;
+  }
+
+  @media screen and (max-width: 1200px) {
+    .Section_Seminar {
+      background-color: paleturquoise;
+      height: 900px;
+    }
+    .Seminar_container {
+      width: 80%;
+      grid-template-columns: repeat(2,1fr);
+      grid-template-rows: repeat(3, 200px);
+      grid-template-areas:
+      "img1 img2"
+      "img3 img4"
+      "img5  ."
+    }
+  }
+  
+  
+  @media screen and (max-width: 600px) {
+    .Section_Seminar {
+      background-color: paleturquoise;
+      height: 1300px;
+    }
+    .Seminar_container {
+      width: 80%;
+      grid-template-columns: repeat(1,1fr);
+      grid-template-rows: repeat(5, 200px);
+      grid-template-areas:
+      "img1"
+      "img2"
+      "img3"
+      "img4"
+      "img5"
+    }
+    }
   /* -----------------------------
   ----------------------------- */
   
