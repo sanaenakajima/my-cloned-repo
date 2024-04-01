@@ -6,4 +6,4 @@ test_1=1000;
 test_2=150;
 test_3=200;
 
-console.log(test_1 - test_2 + test_3); 
+console.log(test_1 - (test_2 + test_3) ); 
