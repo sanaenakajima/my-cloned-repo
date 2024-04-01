@@ -1,5 +1,3 @@
-let test_1;
+let num_1=3000;
 
-test_1=3000;
-
-console.log(test_1 / 3); 
+console.log(num_1 / 3); 
