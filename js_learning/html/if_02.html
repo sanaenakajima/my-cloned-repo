@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>お問い合わせフォーム</title>
+<link rel="stylesheet" type="text/css" href="../css/if_01.css">
+</head>
+<body>
+<div class="container">
+  <h2>お問い合わせフォームを作ろう</h2>
+    <div class="form">
+        <div>
+      <label for="nickname">ニックネーム</label>
+      <input type="text" id="nickname" placeholder="ニックネーム">
+      <p class="error" id="nicknameError"></p>
+    </div>
+    <div>
+      <label for="email">メールアドレス</label>
+      <input type="text" id="email" placeholder="メールアドレス">
+      <p class="error" id="emailError"></p>
+    </div>
+    <div>
+      <label for="phone">電話番号</label>
+      <input type="text" id="phone" placeholder="電話番号">
+      <p class="error" id="phoneError"></p>
+    </div>
+    <div>
+      <label for="inquiry">問い合わせ内容</label>
+      <textarea id="inquiry" rows="10" ></textarea>
+      <p class="error" id="inquiryError"></p>
+    </div>
+    </div>
+    <button id="submitButton">投稿ボタン</button>
+    <p id="successMessage"></p>
+</div>
+<script src="../js/if_02.js"></script>
+</body>
+</html>
