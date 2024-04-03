@@ -1,9 +1,5 @@
-let test_1;
-let test_2;
-let test_3;
+const pocketMoney = 1000;
+const  chocolate = 150;
+const iceCream = 200;
 
-test_1=1000;
-test_2=150;
-test_3=200;
-
-console.log(test_1 - test_2 + test_3); 
+console.log(pocketMoney - (chocolate + iceCream) ); 
