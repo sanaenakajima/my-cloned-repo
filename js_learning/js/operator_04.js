@@ -1,7 +1,4 @@
-let test_1;
-let test_2;
+const numberPeople = 12541;
+const numberPair = 3;
 
-test_1=12541;//参加人数
-test_2=3;//ペア人数
-
-console.log(test_1 % test_2); 
+console.log(numberPeople % numberPair); 
