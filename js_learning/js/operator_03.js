@@ -1,3 +1,3 @@
-let num_1=3000;
+const payMent = 3000;
 
-console.log(num_1 / 3); 
+console.log(payMent / 3); 
