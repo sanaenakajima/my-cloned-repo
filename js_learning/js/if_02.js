@@ -9,23 +9,31 @@ document.addEventListener("DOMContentLoaded", () => {
       const inquiry = document.getElementById("inquiry").value.trim();
 
       clearErrors();
-      if (nickname === "") {
-          displayError("nicknameError", "お名前を入力してください");
-      } else if (email === "") {
-          displayError("emailError", "メールアドレスを入力してください");
-      } else if (!isValidEmail(email)) {
-          displayError("emailError", "有効なメールアドレスを入力してください");
-      } else if (phone === "") {
-          displayError("phoneError", "電話番号を入力してください");
-      } else if (!isValidPhone(phone)) {
-          displayError("phoneError", "有効な電話番号を入力してください");
-      } else if (inquiry === "") {
-          displayError("inquiryError", "問い合わせ内容を入力してください");
-      }
-      if (nickname !== "" && email !== "" && isValidEmail(email) && phone !== "" && isValidPhone(phone) && inquiry !== "") {
-          document.getElementById("successMessage").textContent = "投稿完了です！";
-          clearFields();
-      }
+     
+if (nickname === "") {
+    displayError("nicknameError", "お名前を入力してください");
+}
+
+if (email === "") {
+    displayError("emailError", "メールアドレスを入力してください");
+} else if (!isValidEmail(email)) {
+    displayError("emailError", "有効なメールアドレスを入力してください");
+}
+
+if (phone === "") {
+    displayError("phoneError", "電話番号を入力してください");
+} else if (!isValidPhone(phone)) {
+    displayError("phoneError", "有効な電話番号を入力してください");
+}
+
+if (inquiry === "") {
+    displayError("inquiryError", "問い合わせ内容を入力してください");
+}
+
+if (nickname !== "" && email !== "" && isValidEmail(email) && phone !== "" && isValidPhone(phone) && inquiry !== "") {
+    document.getElementById("successMessage").textContent = "投稿完了です！";
+    clearFields();
+}
   });
 
   const displayError = (errorId, errorMessage) => {
