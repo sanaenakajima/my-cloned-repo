@@ -25,10 +25,9 @@ class Gacha {
 //'draw()'メソッドは、'drawCharacter()'を呼び出してキャラクターを引き、引いたキャラクターと引いた回数をコンソールに表示
     draw() {
         const result = this.drawCharacter();
-    console.log(
-        "ガチャの結果は・・・ランク" + result.rank + "の" + result.name + "が当たりました！\n" +
-        "現在ガチャを" + this.drawCount + "回引きました"
-    );
+        console.log("ガチャの結果は・・・");
+        console.log("ランク" + result.rank + "の" + result.name + "が当たりました！");
+        console.log("現在" + this.drawCount + "回ガチャ引きました");        
     this.drawCount++;
 }
 }
