@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS総合課題</title>
+    <link rel="stylesheet" href="../css/general.css">
+</head>
+<body>
+    <div class="container">
+        <h2>新規投稿</h2>
+        <form id="post-form">
+            <label for="title">タイトル</label><br>
+            <input type="text" id="title" class="title" name="title" required><br>
+            <label for="content">内容</label><br>
+            <textarea id="content" class="content" name="content" rows="4" cols="50" required></textarea><br>
+            <button type="submit">投稿ボタン</button>
+        </form>
+        <h2 class="title2">投稿済みの記事一覧</h2>
+        <div id="post-list" class="post-list">
+          <h3>タイトル</h3>
+          <h3>記事内容</h3>
+        </div>
+    </div>
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p>この記事を本当に削除しますか？</p>
+            <button id="confirm-delete">削除</button>
+            <button class="close-modal">キャンセル</button>
+        </div>
+    </div>
+    <script src="../js/general_01.js"></script>
+</body>
+</html>
+
+
+
