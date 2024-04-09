@@ -22,6 +22,7 @@ const dogImageContainer = document.getElementById('dogImageContainer');
 async function handleGetDogImage() {
   // DogAPIから画像のURLを取得する
   const imageUrl = await dogApi.getDogImage();
+  console.log('取得した犬の画像URL:', imageUrl); // 取得した画像のURLをコンソールに出力
   // 新しいimg要素を作成し、取得した画像のURLを設定する
   const imageElement = document.createElement('img');
   imageElement.src = imageUrl;
