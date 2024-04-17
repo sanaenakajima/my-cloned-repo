@@ -1,135 +1,277 @@
-document.addEventListener("DOMContentLoaded", function() {
-  const postForm = document.getElementById('post-form');
-  const postList = document.getElementById('post-list');
-  const modal = document.getElementById('modal');
-  const confirmDeleteButton = document.getElementById('confirm-delete');
-  const closeModalButtons = document.querySelectorAll('.close-modal');
+class PostManager {
+    constructor() {
+        //現在編集中かどうかを追跡するフラグ
+        this.isEditing = false;
+        //現在編集中の記事のID
+        this.currentEditingId = null;
+        //フォームが送信されたかどうかを追跡するフラグ
+        this.hasSubmitted = false;
+        //初期化メソッドを呼び出す
+        this.init();
+    }
 
-  // JSONPlaceholder APIのベースURL
-  const apiUrl = 'https://jsonplaceholder.typicode.com/posts';
+    //初期化メソッド
+    init() {
+        //フォームの記事の表示コンテナなどの要素を取得し、イベントリスナーを追加する
+        this.postForm = document.getElementById('post-form');
+        this.articlesContainer = document.getElementById('posted-articles-container');
+        this.submitButton = this.postForm.querySelector('button[type="submit"]');
+        this.addEventListeners();
+        //初期表示に記事の表示を更新する
+        this.updateArticlesContainer(); // Initialize with correct UI state
+    }
 
-  // 投稿一覧を取得する関数
-  async function fetchPosts() {
-      try {
-          const response = await fetch(apiUrl);
-          const posts = await response.json();
-          displayPosts(posts);
-      } catch (error) {
-          console.error('Error fetching posts:', error);
-      }
-  }
+    //イベントリスナーを追加するメソッド
+    addEventListeners() {
+        //フォーム送信イベントを処理する
+        this.postForm.addEventListener('submit', (e) => this.handleFormSubmit(e));
+        //記事のアクション（編集や削除）を処理する
+        this.articlesContainer.addEventListener('click', (e) => this.handleArticleActions(e));
+    }
 
-  // 投稿一覧を表示する関数
-  function displayPosts(posts) {
-      postList.innerHTML = '';
-      posts.forEach(post => {
-          // ダミーの記事（IDが100未満）は表示しない
-          if (post.id >= 100) {
-              const postItem = document.createElement('div');
-              postItem.classList.add('post-item');
-              postItem.innerHTML = `
-                  <h3>${post.title}</h3>
-                  <p>${post.body}</p>
-                  <div class="edit-delete-buttons">
-                      <button class="edit-button" data-id="${post.id}">編集</button>
-                      <button class="delete-button" data-id="${post.id}">削除</button>
-                  </div>
-              `;
-              postList.appendChild(postItem);
-          }
-      });
-  }
+    //フォームの送信を処理するメソッド
+    handleFormSubmit(e) {
+        e.preventDefault();
+        if (this.hasSubmitted) return;
 
-  // ページ読み込み時に投稿一覧を取得
-  fetchPosts();
+        const title = document.getElementById('title').value.trim();
+        const content = document.getElementById('content').value.trim();
+        const method = this.isEditing ? 'PATCH' : 'POST';
+        const postId = this.isEditing ? `/${this.currentEditingId}` : '';
 
-  // モーダルを閉じる関数
-  function closeModal() {
-      modal.style.display = 'none';
-  }
+        fetch(`https://jsonplaceholder.typicode.com/posts${postId}`, {
+            method,
+            body: JSON.stringify({ title, body: content, userId: 1 }),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
+        })
+        .then(response => {
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return response.json();
+        })
+        .then(post => {
+            this.updateDOM(post, title, content);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to post or update the article.');
+        });
+    }
 
-  // 削除ボタンがクリックされた時の処理
-  function handleDeleteButtonClick(event) {
-      const postId = event.target.dataset.id;
-      showModal(postId);
-  }
+    //記事の更新を行うメソッド
+    performUpdate(id, title, content, article) {
+        fetch(`https://jsonplaceholder.typicode.com/posts/${id}`, {
+            method: 'PATCH',
+            body: JSON.stringify({ title, body: content, userId: 1 }),
+            headers: { 'Content-type': 'application/json; charset=UTF-8' }
+        })
+        .then(response => {
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return response.json();
+        })
+        .then(data => {
+            console.log('Updated data:', data);
+            article.querySelector('.posted-article__title').textContent = title;
+            article.querySelector('.posted-article__content').textContent = content;
+            this.resetActionButtons(article);
+            this.isEditing = false;
+        })
+        .catch(error => {
+            console.error('Error updating post:', error);
+            alert('Failed to update the post.');
+        });
+    }
 
-  // 削除確認モーダルを表示する関数
-  function showModal(postId) {
-      modal.style.display = 'block';
-      confirmDeleteButton.dataset.id = postId;
-  }
+    //DOMを更新するメソッド
+    updateDOM(post, title, content) {
+        const newPostId = this.isEditing ? this.currentEditingId : post.id;
+        this.addPostToDOM(newPostId, title, content, !this.isEditing);
+        this.postForm.reset();
+        this.isEditing = false;
+        this.currentEditingId = null;
+        this.hasSubmitted = true;
+        this.submitButton.disabled = true;
+    }
 
-  // キャンセルボタンがクリックされた時の処理
-  function handleCloseModalButtonClick(event) {
-      closeModal();
-  }
+    //DOMに記事を追加するメソッド
+    addPostToDOM(id, title, content, reset) {
+        //記事のHTMLを制作
+        const postHTML = `
+            <div class="posted-article" data-id="${id}">
+                <span class="posted-article__label">タイトル</span>
+                <p class="posted-article__title">${title}</p>
+                <span class="posted-article__label">記事内容</span>
+                <p class="posted-article__content">${content}</p>
+                <div class="posted-article__actions">
+                    <button class="post__button post__button--edit">編集</button>
+                    <button class="post__button post__button--delete">削除</button>
+                </div>
+            </div>
+        `;
+        //記事を追加または置換する
+        if (reset) {
+            this.articlesContainer.innerHTML = postHTML;
+        } else {
+            this.articlesContainer.insertAdjacentHTML('beforeend', postHTML);
+        }
+    }
 
-  // 削除確認モーダルで削除ボタンがクリックされた時の処理
-  async function handleConfirmDeleteButtonClick(event) {
-      const postId = event.target.dataset.id;
-      try {
-          const response = await fetch(`${apiUrl}/${postId}`, {
-              method: 'DELETE'
-          });
-          if (!response.ok) {
-              throw new Error('削除に失敗しました。');
-          }
-          closeModal();
-          fetchPosts();
-      } catch (error) {
-          console.error('Error deleting post:', error);
-      }
-  }
+    //記事のアクションを処理するメソッド
+    handleArticleActions(e) {
+        //クリックされた要素を取得
+        const target = e.target;
+        //編集ボタンがクリックされた場合
+        if (target.classList.contains('post__button--edit')) {
+            const article = target.closest('.posted-article');
+            if (!this.isEditing) {
+                this.isEditing = true;
+                this.editArticle(article);
+            }
+        } else if (target.classList.contains('post__button--delete')) {
+            //削除ボタンがクリックされた場合
+            const article = target.closest('.posted-article');
+            const postId = article.dataset.id;
+            const title = article.querySelector('.posted-article__title').textContent;
+            const content = article.querySelector('.posted-article__content').textContent;
+            this.showModal(title, content, 'この記事を削除しますか？', () => {
+                this.deletePost(postId, article);
+            });
+        }
+    }
 
-  // 削除ボタンがクリックされた時のイベントリスナーを設定
-  postList.addEventListener('click', function(event) {
-      if (event.target.classList.contains('delete-button')) {
-          handleDeleteButtonClick(event);
-      }
-  });
+    //記事を削除するメソッド
+    deletePost(postId, article) {
+        //指定された記事をサーバーから削除
+        fetch(`https://jsonplaceholder.typicode.com/posts/${postId}`, {
+            method: 'DELETE',
+        })
+        .then(response => {
+            //HTTPレスポンスが正常でない場合はエラーをスロー
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            //記事をDOMから削除し、記事コンテナを更新
+            article.remove();
+            this.updateArticlesContainer();
+        })
+        .catch(error => {
+            //エラーが発生した場合はコンソールにエラーメッセージを出力し、アラートを表示
+            console.error('Error deleting post:', error);
+            alert('Error deleting post');
+        });
+    }
 
-  // キャンセルボタンがクリックされた時のイベントリスナーを設定
-  closeModalButtons.forEach(button => {
-      button.addEventListener('click', handleCloseModalButtonClick);
-  });
+    //記事コンテナを更新するメソッド
+    updateArticlesContainer() {
+        //記事がまだ１つも投稿されていない場合
+        if (!this.articlesContainer.children.length) {
+            this.articlesContainer.innerHTML = `
+                <div class="posted-article">
+                    <span class="posted-article__label">タイトル</span>
+                    <span class="posted-article__label">記事内容</span>
+                    <div class="posted-article__actions">
+                        <button class="post__button post__button--edit" disabled>編集</button>
+                        <button class="post__button post__button--delete" disabled>削除</button>
+                    </div>
+                </div>
+            `;
+        }
+        //送信ボタンを有効化し、送信フラグをリセット
+        this.enableSubmitButton();
+    }
 
-  // 削除確認モーダルで削除ボタンがクリックされた時のイベントリスナーを設定
-  confirmDeleteButton.addEventListener('click', handleConfirmDeleteButtonClick);
+    //送信ボタンを有効化するメソッド
+    enableSubmitButton() {
+        this.submitButton.disabled = false;
+        this.hasSubmitted = false;
+    }
 
-  // 投稿フォームが送信された時の処理
-  postForm.addEventListener('submit', async function(event) {
-      event.preventDefault();
-      const title = document.getElementById('title').value;
-      const content = document.getElementById('content').value;
-      
-      // バリデーション
-      if (!title || !content) {
-          alert('タイトルと内容は必須項目です。');
-          return;
-      }
-      
-      try {
-          const response = await fetch(apiUrl, {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                  title,
-                  body: content,
-                  userId: 1
-              })
-          });
-          if (!response.ok) {
-              throw new Error('投稿に失敗しました。');
-          }
-          fetchPosts();
-      } catch (error) {
-          console.error('Error posting:', error);
-      }
-      // 投稿後にフォームをクリアする
-      postForm.reset();
-  });
+    //記事の編集を行うメソッド
+    editArticle(article) {
+        //記事のIDと元のタイトル・内容の取得
+        const id = article.dataset.id;
+        const titleElement = article.querySelector('.posted-article__title');
+        const contentElement = article.querySelector('.posted-article__content');
+        const originalTitle = titleElement.textContent;
+        const originalContent = contentElement.textContent;
+    
+        //編集用の入力フィールドに変更
+        titleElement.innerHTML = `<input type="text" value="${originalTitle}" class="edit-input title">`;
+        contentElement.innerHTML = `<textarea class="edit-input content">${originalContent}</textarea>`;
+    
+        //編集用のボタンを表示
+        article.querySelector('.posted-article__actions').innerHTML = `
+            <button class="post__button post__button--cancel">キャンセル</button>
+            <button class="post__button post__button--update">更新</button>
+        `;
+    
+        // 更新ボタンのクリックイベントリスナーを追加
+        article.querySelector('.post__button--update').addEventListener('click', () => {
+            //更新されたタイトルと内容を取得し、確認モーダル表示
+            const updatedTitle = titleElement.querySelector('.edit-input.title').value;
+            const updatedContent = contentElement.querySelector('.edit-input.content').value;
+            this.showModal(updatedTitle, updatedContent, 'この記事を更新しますか？', () => {
+                //更新を確認したら更新処理を実行
+                this.performUpdate(id, updatedTitle, updatedContent, article);
+            });
+        });
+    
+        //キャンセルボタンのクリックイベントリスナーを追加
+        article.querySelector('.post__button--cancel').addEventListener('click', () => {
+            //編集をキャンセルし、元のタイトルと内容を復元
+            this.cancelEdit(article, originalTitle, originalContent);
+        });
+    }
+    
+    //編集用モーダルを表示するメソッド
+    showModal(title, content, question, onConfirm) {
+        //モーダル要素とその中の要素を取得
+        const modal = document.getElementById('modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalContent = document.getElementById('modal-content');
+        const modalQuestion = document.getElementById('modal-question');
+        //モーダルにタイトル、内容、質問を設定
+        modalTitle.textContent = `タイトル: ${title}`;
+        modalContent.textContent = `記事内容: ${content}`;
+        modalQuestion.textContent = question;
 
-});
+        //モーダルを表示し、OKボタンと閉じるボタンのクリックイベントリスナーを追加
+        modal.style.display = 'block';
+        document.getElementById('modal-ok').onclick = () => {
+            onConfirm();
+            modal.style.display = 'none';
+        };
+        document.querySelector('.modal__close').onclick = () => {
+            modal.style.display = 'none';
+        };
+    }
+
+    //モーダルを閉じるメソッド
+    closeModal() {
+        const modal = document.getElementById('modal');
+        if (modal) {
+            modal.style.display = 'none';
+        } else {
+            console.error('Modal element not found');
+        }
+    }
+
+    //編集をキャンセルするメソッド
+    cancelEdit(article, originalTitle, originalContent) {
+        //元のタイトルと内容に戻し、アクションボタンをリセット
+        article.querySelector('.posted-article__title').textContent = originalTitle;
+        article.querySelector('.posted-article__content').textContent = originalContent;
+        this.resetActionButtons(article);
+        this.isEditing = false;
+    }
+
+    //アクションボタンをリセットするメソッド
+    resetActionButtons(article) {
+        article.querySelector('.posted-article__actions').innerHTML = `
+            <button class="post__button post__button--edit">編集</button>
+            <button class="post__button post__button--delete">削除</button>
+        `;
+    }
+}
+
+//DOMContentLoadedイベントが発生したらPostManagerのインスタンスを生成する
+document.addEventListener('DOMContentLoaded', () => new PostManager());
