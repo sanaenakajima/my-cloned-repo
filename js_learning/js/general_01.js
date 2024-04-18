@@ -18,7 +18,7 @@ class PostManager {
         this.submitButton = this.postForm.querySelector('button[type="submit"]');
         this.addEventListeners();
         //初期表示に記事の表示を更新する
-        this.updateArticlesContainer(); // Initialize with correct UI state
+        this.updateArticlesContainer();
     }
 
     //イベントリスナーを追加するメソッド
@@ -29,70 +29,69 @@ class PostManager {
         this.articlesContainer.addEventListener('click', (e) => this.handleArticleActions(e));
     }
 
-    //フォームの送信を処理するメソッド
-    handleFormSubmit(e) {
-        e.preventDefault();
-        if (this.hasSubmitted) return;
+    ///フォームの送信を処理するメソッド
+async handleFormSubmit(e) {
+    e.preventDefault();
+    if (this.hasSubmitted) return;
 
-        const title = document.getElementById('title').value.trim();
-        const content = document.getElementById('content').value.trim();
-        const method = this.isEditing ? 'PATCH' : 'POST';
-        const postId = this.isEditing ? `/${this.currentEditingId}` : '';
+    const title = document.getElementById('title').value.trim();
+    const content = document.getElementById('content').value.trim();
+    const method = this.isEditing ? 'PATCH' : 'POST';
+    const postId = this.isEditing ? `/${this.currentEditingId}` : '';
 
-        fetch(`https://jsonplaceholder.typicode.com/posts${postId}`, {
+    try {
+        const response = await fetch(`https://jsonplaceholder.typicode.com/posts`, {
             method,
-            body: JSON.stringify({ title, body: content, userId: 1 }),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
-            },
-        })
-        .then(response => {
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            return response.json();
-        })
-        .then(post => {
-            this.updateDOM(post, title, content);
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Failed to post or update the article.');
+            body: JSON.stringify({ title, content }),     
         });
-    }
 
-    //記事の更新を行うメソッド
-    performUpdate(id, title, content, article) {
-        fetch(`https://jsonplaceholder.typicode.com/posts/${id}`, {
-            method: 'PATCH',
-            body: JSON.stringify({ title, body: content, userId: 1 }),
-            headers: { 'Content-type': 'application/json; charset=UTF-8' }
-        })
-        .then(response => {
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            return response.json();
-        })
-        .then(data => {
-            console.log('Updated data:', data);
-            article.querySelector('.posted-article__title').textContent = title;
-            article.querySelector('.posted-article__content').textContent = content;
-            this.resetActionButtons(article);
-            this.isEditing = false;
-        })
-        .catch(error => {
-            console.error('Error updating post:', error);
-            alert('Failed to update the post.');
-        });
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const post = await response.json();
+        this.updateDOM(post, title, content); 
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to post or update the article.');
+    } finally {
+        this.postForm.reset();
+        this.submitButton.disabled = true;
+        this.hasSubmitted = true;
     }
+}
+
+//記事の更新を行うメソッド
+async performUpdate(id, title, content, article) {
+    try {
+        const response = await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`, {
+            method: 'PATCH',
+            body: JSON.stringify({ title,content }),
+            headers: { 'Content-type': 'application/json; charset=UTF-8' }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        // UIを更新する部分
+        article.querySelector('.posted-article__title').textContent = title;
+        article.querySelector('.posted-article__content').textContent = content;
+        this.resetActionButtons(article);
+        this.isEditing = false;
+    } catch (error) {
+        console.error('Error updating post:', error);
+        alert('Failed to update the post.');
+    }
+}
 
     //DOMを更新するメソッド
-    updateDOM(post, title, content) {
-        const newPostId = this.isEditing ? this.currentEditingId : post.id;
-        this.addPostToDOM(newPostId, title, content, !this.isEditing);
-        this.postForm.reset();
-        this.isEditing = false;
-        this.currentEditingId = null;
-        this.hasSubmitted = true;
-        this.submitButton.disabled = true;
-    }
+updateDOM(post, title, content) {
+    const newPostId = this.isEditing ? this.currentEditingId : post.id;
+    this.addPostToDOM(newPostId, title, content, !this.isEditing);
+    this.isEditing = false;
+    this.currentEditingId = null;
+}
 
     //DOMに記事を追加するメソッド
     addPostToDOM(id, title, content, reset) {
@@ -141,24 +140,27 @@ class PostManager {
     }
 
     //記事を削除するメソッド
-    deletePost(postId, article) {
-        //指定された記事をサーバーから削除
-        fetch(`https://jsonplaceholder.typicode.com/posts/${postId}`, {
+async deletePost(postId, article) {
+    try {
+        const response = await fetch(`https://jsonplaceholder.typicode.com/posts/${postId}`, {
             method: 'DELETE',
-        })
-        .then(response => {
-            //HTTPレスポンスが正常でない場合はエラーをスロー
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            //記事をDOMから削除し、記事コンテナを更新
-            article.remove();
-            this.updateArticlesContainer();
-        })
-        .catch(error => {
-            //エラーが発生した場合はコンソールにエラーメッセージを出力し、アラートを表示
-            console.error('Error deleting post:', error);
-            alert('Error deleting post');
         });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        // 記事をDOMから削除し、記事コンテナを更新
+        article.remove();
+        this.updateArticlesContainer();
+        // 送信ボタンを再び有効化する
+        this.enableSubmitButton();
+    } catch (error) {
+        // エラーが発生した場合はコンソールにエラーメッセージを出力し、アラートを表示
+        console.error('Error deleting post:', error);
+        alert('Error deleting post');
     }
+}
 
     //記事コンテナを更新するメソッド
     updateArticlesContainer() {
@@ -175,8 +177,6 @@ class PostManager {
                 </div>
             `;
         }
-        //送信ボタンを有効化し、送信フラグをリセット
-        this.enableSubmitButton();
     }
 
     //送信ボタンを有効化するメソッド
