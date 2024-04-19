@@ -61,34 +61,9 @@ async handleFormSubmit(e) {
     }
 }
 
-//記事の更新を行うメソッド
-async performUpdate(id, title, content, article) {
-    try {
-        const response = await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`, {
-            method: 'PATCH',
-            body: JSON.stringify({ title,content }),
-            headers: { 'Content-type': 'application/json; charset=UTF-8' }
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        // UIを更新する部分
-        article.querySelector('.posted-article__title').textContent = title;
-        article.querySelector('.posted-article__content').textContent = content;
-        this.resetActionButtons(article);
-        this.isEditing = false;
-    } catch (error) {
-        console.error('Error updating post:', error);
-        alert('Failed to update the post.');
-    }
-}
-
-    //DOMを更新するメソッド
+//投稿をDOMに反映
 updateDOM(post, title, content) {
-    const newPostId = this.isEditing ? this.currentEditingId : post.id;
-    this.addPostToDOM(newPostId, title, content, !this.isEditing);
+    this.addPostToDOM(post.id, title, content, !this.isEditing);
     this.isEditing = false;
     this.currentEditingId = null;
 }
@@ -139,52 +114,6 @@ updateDOM(post, title, content) {
         }
     }
 
-    //記事を削除するメソッド
-async deletePost(postId, article) {
-    try {
-        const response = await fetch(`https://jsonplaceholder.typicode.com/posts/${postId}`, {
-            method: 'DELETE',
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        // 記事をDOMから削除し、記事コンテナを更新
-        article.remove();
-        this.updateArticlesContainer();
-        // 送信ボタンを再び有効化する
-        this.enableSubmitButton();
-    } catch (error) {
-        // エラーが発生した場合はコンソールにエラーメッセージを出力し、アラートを表示
-        console.error('Error deleting post:', error);
-        alert('Error deleting post');
-    }
-}
-
-    //記事コンテナを更新するメソッド
-    updateArticlesContainer() {
-        //記事がまだ１つも投稿されていない場合
-        if (!this.articlesContainer.children.length) {
-            this.articlesContainer.innerHTML = `
-                <div class="posted-article">
-                    <span class="posted-article__label">タイトル</span>
-                    <span class="posted-article__label">記事内容</span>
-                    <div class="posted-article__actions">
-                        <button class="post__button post__button--edit" disabled>編集</button>
-                        <button class="post__button post__button--delete" disabled>削除</button>
-                    </div>
-                </div>
-            `;
-        }
-    }
-
-    //送信ボタンを有効化するメソッド
-    enableSubmitButton() {
-        this.submitButton.disabled = false;
-        this.hasSubmitted = false;
-    }
-
     //記事の編集を行うメソッド
     editArticle(article) {
         //記事のIDと元のタイトル・内容の取得
@@ -221,7 +150,29 @@ async deletePost(postId, article) {
             this.cancelEdit(article, originalTitle, originalContent);
         });
     }
-    
+    //記事の更新を行うメソッド
+async performUpdate(id, title, content, article) {
+    try {
+        const response = await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`, {
+            method: 'PATCH',
+            body: JSON.stringify({ title,content }),
+            headers: { 'Content-type': 'application/json; charset=UTF-8' }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        // UIを更新する部分
+        article.querySelector('.posted-article__title').textContent = title;
+        article.querySelector('.posted-article__content').textContent = content;
+        this.resetActionButtons(article);
+        this.isEditing = false;
+    } catch (error) {
+        console.error('Error updating post:', error);
+        alert('Failed to update the post.');
+    }
+}
     //編集用モーダルを表示するメソッド
     showModal(title, content, question, onConfirm) {
         //モーダル要素とその中の要素を取得
@@ -254,6 +205,53 @@ async deletePost(postId, article) {
             console.error('Modal element not found');
         }
     }
+
+//記事を削除するメソッド
+async deletePost(postId, article) {
+    try {
+        const response = await fetch(`https://jsonplaceholder.typicode.com/posts/${postId}`, {
+            method: 'DELETE',
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        // 記事をDOMから削除し、記事コンテナを更新
+        article.remove();
+        this.updateArticlesContainer();
+        // 送信ボタンを再び有効化する
+        this.enableSubmitButton();
+    } catch (error) {
+        // エラーが発生した場合はコンソールにエラーメッセージを出力し、アラートを表示
+        console.error('Error deleting post:', error);
+        alert('Error deleting post');
+    }
+}
+
+
+//記事コンテナを更新するメソッド
+updateArticlesContainer() {
+    //記事がまだ１つも投稿されていない場合
+    if (!this.articlesContainer.children.length) {
+        this.articlesContainer.innerHTML = `
+            <div class="posted-article">
+                <span class="posted-article__label">タイトル</span>
+                <span class="posted-article__label">記事内容</span>
+                <div class="posted-article__actions">
+                    <button class="post__button post__button--edit" disabled>編集</button>
+                    <button class="post__button post__button--delete" disabled>削除</button>
+                </div>
+            </div>
+        `;
+    }
+}
+
+//送信ボタンを有効化するメソッド
+enableSubmitButton() {
+    this.submitButton.disabled = false;
+    this.hasSubmitted = false;
+}
 
     //編集をキャンセルするメソッド
     cancelEdit(article, originalTitle, originalContent) {
