@@ -36,12 +36,10 @@ async handleFormSubmit(e) {
 
     const title = document.getElementById('title').value.trim();
     const content = document.getElementById('content').value.trim();
-    const method = this.isEditing ? 'PATCH' : 'POST';
-    const postId = this.isEditing ? `/${this.currentEditingId}` : '';
 
     try {
         const response = await fetch(`https://jsonplaceholder.typicode.com/posts`, {
-            method,
+            method: "POST",
             body: JSON.stringify({ title, content }),     
         });
 
