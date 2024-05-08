@@ -1,19 +1,17 @@
-import React from 'react';
-import { createRoot } from 'react-dom/client'; // createRootをインポート
-import { BrowserRouter } from 'react-router-dom';
-import App from './App';
+// index.tsx
+import React from "react";
+import { createRoot } from "react-dom/client";
+import App from "./App";
 
-const container = document.getElementById('root'); // レンダリングする要素を取得
+const container = document.getElementById("root");
 
 if (container) {
-    const root = createRoot(container); // rootインスタンスを作成
-    root.render( // root.renderメソッドを使用してレンダリング
+    const root = createRoot(container);
+    root.render(
       <React.StrictMode>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
+        <App />
       </React.StrictMode>
     );
 } else {
-    console.error('Failed to find the root element');
+    console.error("Failed to find the root element");
 }
