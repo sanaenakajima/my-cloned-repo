@@ -1,0 +1,101 @@
+/* 全体の背景色とフォント設定 */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f0f2f5;
+    color: #333;
+    padding: 20px;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  /* フォームコンテナのスタイリング */
+  .formContainer {
+    width: 100%;
+    max-width: 500px;
+    background-color: white;
+    padding: 40px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+  }
+  
+  /* フォームタイトル */
+  h1 {
+    color: #007bff;
+    text-align: center;
+    margin: 0 0 20px 0;
+  }
+  
+  /* 水平線のスタイリング */
+  hr {
+    border: 0;
+    height: 1px;
+    background-color: #ccc;
+    margin-bottom: 20px;
+  }
+  
+  /* 入力フィールドとラベルのスタイリング */
+  label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  
+  input[type="text"],
+  input[type="email"],
+  input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin-top: 20px;
+    box-sizing: border-box;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    background-color: #f8f9fa;
+  }
+  
+  input[type="text"]:focus,
+  input[type="email"]:focus,
+  input[type="password"]:focus {
+    border-color: #007bff;
+    outline: none;
+    background-color: white;
+  }
+  
+  /* ボタンのスタイリング */
+  button {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    background-color: #007bff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin: 20px 0 20px 0;
+  }
+  
+  button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* フォームの各フィールドを囲むdivスタイリング */
+  .uniForm {
+    margin-bottom: 20px;
+  }
+
+  /* 入力フィールドのエラーメッセージのスタイリング */
+.error {
+  color: #D8000C; /* 赤色でエラーメッセージを表示 */
+  margin: ; /* メッセージと入力フィールドの間にスペースを追加 */
+  font-size: 0.8rem; /* フォントサイズを小さくする */
+  width: 95%; /* コンテナのほぼ全幅 */
+}
+
+/* 入力フィールドのエラースタイル */
+.input-error {
+  border: 2px solid #D8000C; /* 入力フィールドの枠線を赤くする */
+}
