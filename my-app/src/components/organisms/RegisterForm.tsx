@@ -1,14 +1,14 @@
-//src/components/organisms/RegisterForm.tsx
+// src/components/organisms/RegisterForm.tsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../store/store';
+import { useSelector } from 'react-redux';
+import { RootState, useAppDispatch } from '../../store/store';
 import RegisterFormFields from '../molecules/RegisterFormFields';
-import { setUserIcon, setErrors } from '../../store/userSlice';
+import { setEmail, setPassword, setPasswordConfirm, setNickname, setUserIcon, setErrors, register } from '../../store/userSlice';
 import { PayloadAction } from '@reduxjs/toolkit';
 
 const RegisterForm: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { email, password, passwordConfirm, nickname, userIcon, errors } = useSelector((state: RootState) => state.user);
   const [imagePreviewUrl, setImagePreviewUrl] = useState(userIcon);
@@ -40,7 +40,8 @@ const RegisterForm: React.FC = () => {
       password: '',
       passwordConfirm: '',
       nickname: '',
-      userIcon: ''
+      userIcon: '',
+      general: ''
     };
     let isValid = true;
 
@@ -106,28 +107,11 @@ const RegisterForm: React.FC = () => {
     console.log('Registering user:', userData);
 
     try {
-      const response = await fetch('/user', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(userData)
-      });
+      await dispatch(register(userData)).unwrap();
 
-      console.log('Response:', response);
-
-      if ([200, 201, 204].includes(response.status)) {
-        console.log('Registration successful!');
-        sessionStorage.setItem('userData', JSON.stringify(userData)); // セッションストレージに保存
-        navigate('/my-page');
-      } else {
-        const errorData = await response.json();
-        console.log('Error data:', errorData);
-        dispatch(setErrors(errorData.errors));
-      }
-    } catch (error) {
-      console.error('Registration failed:', error);
-      navigate('/');
+      navigate('/my-page'); // 会員登録後にマイページに遷移
+    } catch (err) {
+      console.error('Registration failed:', err);
     }
   };
 
@@ -139,7 +123,7 @@ const RegisterForm: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center justify-start pt-20">
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-start pt-20">
       <div className="w-full max-w-lg text-center p-6">
         <h1 className="text-3xl tablet:text-4xl laptop:text-5xl font-bold mb-8 text-navy-800">会員登録</h1>
         <RegisterFormFields
@@ -165,5 +149,3 @@ const RegisterForm: React.FC = () => {
 };
 
 export default RegisterForm;
-
-
