@@ -1,4 +1,4 @@
-//ヘッダー部分
+// src/components/organisms/Header.tsx
 import React from 'react';
 import Logo from '../atoms/Logo';
 import NavMenu from '../molecules/NavMenu';

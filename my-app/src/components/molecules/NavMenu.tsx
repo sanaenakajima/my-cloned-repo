@@ -1,3 +1,4 @@
+// src/components/molecules/NavMenu.tsx
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -58,4 +59,5 @@ const NavMenu: React.FC<NavMenuProps> = ({ isLoggedIn, onLogout }) => {
 };
 
 export default NavMenu;
+
 
