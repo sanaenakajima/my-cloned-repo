@@ -1,4 +1,4 @@
-//src/components/organisms/RegisterForm.tsx
+// src/components/organisms/RegisterForm.tsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -6,6 +6,7 @@ import { RootState, useAppDispatch } from '../../store/store';
 import RegisterFormFields from '../molecules/RegisterFormFields';
 import { setEmail, setPassword, setPasswordConfirm, setNickname, setUserIcon, setErrors, register } from '../../store/userSlice';
 import { PayloadAction } from '@reduxjs/toolkit';
+import Button from '../atoms/Button';
 
 const RegisterForm: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -14,11 +15,13 @@ const RegisterForm: React.FC = () => {
   const [imagePreviewUrl, setImagePreviewUrl] = useState(userIcon);
   const [isFormValid, setIsFormValid] = useState(true);
   const [isSubmitted, setIsSubmitted] = useState(false);
+
   useEffect(() => {
     if (isSubmitted) {
       validateForm();
     }
   }, [email, password, passwordConfirm, nickname, userIcon]);
+
   const handleFileChange = (base64: string | null, fileName: string | null) => {
     setImagePreviewUrl(base64);
     dispatch(setUserIcon(base64));
@@ -31,6 +34,7 @@ const RegisterForm: React.FC = () => {
       validateForm();
     }
   };
+
   const validateForm = () => {
     const newErrors = {
       email: '',
@@ -49,6 +53,7 @@ const RegisterForm: React.FC = () => {
       newErrors.email = 'メールアドレスの形式が正しくありません';
       isValid = false;
     }
+
     if (!password) {
       newErrors.password = '入力してください';
       isValid = false;
@@ -56,6 +61,7 @@ const RegisterForm: React.FC = () => {
       newErrors.password = '8文字以上で入力してください';
       isValid = false;
     }
+
     if (!passwordConfirm) {
       newErrors.passwordConfirm = '入力してください';
       isValid = false;
@@ -66,6 +72,7 @@ const RegisterForm: React.FC = () => {
       newErrors.passwordConfirm = '8文字以上で入力してください';
       isValid = false;
     }
+
     if (!nickname) {
       newErrors.nickname = '入力してください';
       isValid = false;
@@ -73,14 +80,17 @@ const RegisterForm: React.FC = () => {
       newErrors.nickname = '8文字以上で入力してください';
       isValid = false;
     }
+
     if (userIcon && !userIcon.startsWith('data:image/jpeg')) {
       newErrors.userIcon = '.jpg形式のファイルを選択してください';
       isValid = false;
     }
+
     dispatch(setErrors(newErrors));
     setIsFormValid(isValid);
     return isValid;
   };
+
   const handleRegister = async () => {
     setIsSubmitted(true);
     if (!validateForm()) {
@@ -97,7 +107,6 @@ const RegisterForm: React.FC = () => {
 
     try {
       await dispatch(register(userData)).unwrap();
-
       navigate('/my-page'); // 会員登録後にマイページに遷移
     } catch (err) {
       console.error('Registration failed:', err);
@@ -125,17 +134,20 @@ const RegisterForm: React.FC = () => {
           onFieldChange={handleFieldChange}
           onFileChange={handleFileChange}
         />
-        <button
+        <Button
           onClick={handleRegister}
           disabled={!isFormValid}
           className={`bg-navy-700 hover:bg-navy-900 text-white font-bold py-3 px-6 rounded ${!isFormValid && 'opacity-50 cursor-not-allowed'}`}
         >
           登録する
-        </button>
+        </Button>
       </div>
     </div>
   );
 };
 
 export default RegisterForm;
+
+
+
 

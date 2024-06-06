@@ -1,11 +1,14 @@
+// src/components/atoms/ErrorMessage.tsx
 import React from 'react';
 
 interface ErrorMessageProps {
-    error?: string;
+  message?: string;
+  className?: string;
 }
 
-const ErrorMessage: React.FC<ErrorMessageProps> = ({ error }) => {
-    return error ? <p className="text-red-500 text-xs italic">{error}</p> : null;
+const ErrorMessage: React.FC<ErrorMessageProps> = ({ message, className }) => {
+  return message ? <p className={`text-red-500 text-xs text-left italic ${className}`}>{message}</p> : null;
 };
 
 export default ErrorMessage;
+

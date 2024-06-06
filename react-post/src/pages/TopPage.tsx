@@ -2,6 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAppSelector } from '../store/store';
+import Button from '../components/atoms/Button';
 
 const TopPage: React.FC = () => {
     const isLoggedIn = useAppSelector(state => Boolean(state.user.token));
@@ -13,11 +14,15 @@ const TopPage: React.FC = () => {
                 <p className="mb-12 text-base tablet:text-lg laptop:text-xl text-navy-600">React.jsを利用したブログサービス課題です。</p>
                 {!isLoggedIn && (
                     <div className="mb-12 flex flex-col tablet:flex-row tablet:space-x-6 space-y-6 tablet:space-y-0 justify-center">
-                        <Link to="/login" className="bg-navy-700 hover:bg-navy-900 text-white font-bold py-3 px-6 rounded">
-                            ログイン
+                        <Link to="/login" className="w-full tablet:w-auto">
+                            <Button className="w-full tablet:w-auto bg-navy-700 hover:bg-navy-900 text-white font-bold py-3 px-6 rounded">
+                                ログイン
+                            </Button>
                         </Link>
-                        <Link to="/register" className="bg-navy-700 hover:bg-navy-900 text-white font-bold py-3 px-6 rounded">
-                            会員登録
+                        <Link to="/register" className="w-full tablet:w-auto">
+                            <Button className="w-full tablet:w-auto bg-navy-700 hover:bg-navy-900 text-white font-bold py-3 px-6 rounded">
+                                会員登録
+                            </Button>
                         </Link>
                     </div>
                 )}
@@ -28,4 +33,6 @@ const TopPage: React.FC = () => {
         </div>
     );
 };
+
 export default TopPage;
+
