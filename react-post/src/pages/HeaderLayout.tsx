@@ -2,18 +2,22 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import Header from '../components/organisms/Header';
+import useAuth from '../hooks/useAuth';
+import { useAppDispatch } from '../store/store';
+import { logout } from '../store/userSlice';
 
 const HeaderLayout: React.FC = () => {
-    const isLoggedIn = Boolean(localStorage.getItem('access_token'));
+    const dispatch = useAppDispatch();
+    const { isAuthenticated } = useAuth();
 
     const handleLogout = () => {
-        localStorage.removeItem('access_token');
+        dispatch(logout());
         window.location.href = '/';
     };
 
     return (
         <div>
-            <Header isLoggedIn={isLoggedIn} onLogout={handleLogout} />
+            <Header isLoggedIn={isAuthenticated} onLogout={handleLogout} />
             <main>
                 <Outlet />
             </main>

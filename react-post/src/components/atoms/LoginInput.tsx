@@ -1,4 +1,4 @@
-// src/components/atoms/InputField.tsx
+// src/components/atoms/login/InputField.tsx
 import React from 'react';
 import ErrorMessage from './ErrorMessage';
 
@@ -8,12 +8,11 @@ interface InputFieldProps {
     value: string;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     error: string;
-    className?: string;
 }
 
-const InputField: React.FC<InputFieldProps> = ({ label, type, value, onChange, error, className }) => {
+const InputField: React.FC<InputFieldProps> = ({ label, type, value, onChange, error }) => {
     return (
-        <div className={`input-field ${className}`}>
+        <div className="mb-4 text-center">
             <label className="block text-gray-700 text-sm text-left font-bold mb-2">{label}</label>
             <input
                 type={type}
@@ -21,7 +20,7 @@ const InputField: React.FC<InputFieldProps> = ({ label, type, value, onChange, e
                 onChange={onChange}
                 className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${error && 'border-red-500'}`}
             />
-            <ErrorMessage error={error} />
+            {error && <ErrorMessage error={error} />}
         </div>
     );
 };

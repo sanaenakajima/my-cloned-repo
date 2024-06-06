@@ -32,7 +32,7 @@ const RegisterFormFields: React.FC<RegisterFormFieldsProps> = ({
     onFieldChange,
     onFileChange
 }) => {
-    const initialImageUrl = imagePreviewUrl || "/icons/usericon.jpg";
+    const initialImageUrl = imagePreviewUrl || "/icons/usericon2.png";
 
     return (
         <>

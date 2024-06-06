@@ -1,28 +1,60 @@
 // src/mocks/handlers.js
 import { rest } from 'msw';
 
+// ローカルストレージからユーザーデータを読み込む
+const usersKey = 'mockUsers';
+let users = JSON.parse(localStorage.getItem(usersKey)) || [];
+
+const saveUsers = () => {
+  localStorage.setItem(usersKey, JSON.stringify(users));
+};
+
 export const handlers = [
   rest.post('/user', async (req, res, ctx) => {
-    try {
-      const text = await req.text();
-      const body = JSON.parse(text);
-      const { email, password, password_confirmation, representative_image } = body;
+    const { name, email, password, password_confirmation, representative_image } = await req.json();
 
-      if (email === 'error@example.com') {
-        return res(
-          ctx.status(500),
-          ctx.json({ message: 'サーバーエラーが発生しました。' })
-        );
-      }
+    const newUser = {
+      user_id: `user_${Date.now()}`,
+      name,
+      email,
+      password, // 実際にはハッシュ化されたパスワードを保存すべきです
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      deleted_at: null,
+      representative_image,
+      token: `token_${Date.now()}`
+    };
 
+    users.push(newUser);
+    saveUsers(); // ユーザーを保存
+
+    console.log('Registered users:', users);  // Debugging line
+
+    return res(
+      ctx.status(201),
+      ctx.json(newUser)
+    );
+  }),
+
+  rest.post('/login', async (req, res, ctx) => {
+    const { email, password } = await req.json();
+
+    // ログイン時にローカルストレージからユーザーを再読み込みする
+    users = JSON.parse(localStorage.getItem(usersKey)) || [];
+    console.log('Current users:', users);  // Debugging line
+    console.log('Login attempt with:', { email, password });  // Debugging line
+
+    const user = users.find(user => user.email === email && user.password === password);
+
+    if (user) {
       return res(
-        ctx.status(201),
-        ctx.json({ message: '登録成功', email, password, password_confirmation, representative_image })
+        ctx.status(200),
+        ctx.json({ user })
       );
-    } catch (error) {
+    } else {
       return res(
-        ctx.status(500),
-        ctx.json({ message: 'サーバーエラーが発生しました。' })
+        ctx.status(404),
+        ctx.json({ message: 'User not found' })
       );
     }
   }),

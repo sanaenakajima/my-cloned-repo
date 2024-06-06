@@ -1,10 +1,11 @@
 // src/pages/TopPage.tsx
 import React from 'react';
 import { Link } from 'react-router-dom';
-
-const isLoggedIn = false; // この値を動的に変更
+import { useAppSelector } from '../store/store';
 
 const TopPage: React.FC = () => {
+    const isLoggedIn = useAppSelector(state => Boolean(state.user.token));
+
     return (
         <div className="min-h-screen bg-white flex flex-col items-center justify-start pt-20">
             <div className="w-full max-w-2xl text-center p-6">
@@ -21,11 +22,10 @@ const TopPage: React.FC = () => {
                     </div>
                 )}
                 <div className="flex justify-center">
-                    <img src="/icons/toppage.jpg" alt="Description" className="w-3/4 rounded-lg shadow-lg"/>
+                    <img src="/icons/toppage.jpg" alt="Description" className="w-3/4 rounded-lg shadow-lg" />
                 </div>
             </div>
         </div>
     );
 };
-
 export default TopPage;

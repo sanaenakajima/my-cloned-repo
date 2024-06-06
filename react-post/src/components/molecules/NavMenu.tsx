@@ -1,3 +1,4 @@
+// src/components/molecules/NavMenu.tsx
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -5,12 +6,9 @@ interface NavMenuProps {
     isLoggedIn: boolean;
     onLogout: () => void;
 }
-
 const NavMenu: React.FC<NavMenuProps> = ({ isLoggedIn, onLogout }) => {
     const [isOpen, setIsOpen] = useState(false);
-
     const handleToggle = () => setIsOpen(!isOpen);
-
     return (
         <nav>
             {/* ハンバーガーメニュー（スマホ） */}
@@ -36,7 +34,6 @@ const NavMenu: React.FC<NavMenuProps> = ({ isLoggedIn, onLogout }) => {
                     </div>
                 )}
             </div>
-
             {/* 横並びのナビゲーションメニュー（タブレットとPC） */}
             <div className="hidden sm:flex space-x-6">
                 {!isLoggedIn && (

@@ -2,6 +2,7 @@
 import './App.css';
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import LoginPage from './pages/LoginPage';
 import TopPage from './pages/TopPage';
 import RegisterPage from './pages/RegisterPage';
 import MyPage from './pages/MyPage';
@@ -14,11 +15,12 @@ const App: React.FC = () => {
         <Route path="/" element={<HeaderLayout />}>
           <Route index element={<TopPage />} />
           <Route path="register" element={<RegisterPage />} />
+          <Route path="login" element={<LoginPage />} />
+          <Route path="register" element={<RegisterPage />} />
           <Route path="my-page" element={<MyPage />} />
         </Route>
       </Routes>
     </Router>
   );
 };
-
 export default App;

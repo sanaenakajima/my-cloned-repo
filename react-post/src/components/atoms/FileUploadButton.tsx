@@ -28,7 +28,7 @@ const FileUploadButton: React.FC<FileUploadButtonProps> = ({ onFileSelect, image
 
     return (
         <div className={`file-upload-button ${className}`}>
-            <label className="block text-gray-700 text-sm font-bold mb-2">ユーザーアイコン画像</label>
+            <label className="block text-gray-700 text-sm text-left font-bold mb-2">ユーザーアイコン画像</label>
             <label htmlFor="file-upload" className="cursor-pointer inline-block">
                 <img src={imageUrl} className="w-32 h-32 object-cover rounded-full mb-2" alt="User Icon" />
                 <input type="file" id="file-upload" className="hidden" onChange={handleFileChange} />
