@@ -1,11 +1,13 @@
 // src/app/store.ts
 import { configureStore } from '@reduxjs/toolkit';
 import userReducer from './userSlice';
+import articleReducer from './articleSlice';
 import { useDispatch as useReduxDispatch, useSelector as useReduxSelector, TypedUseSelectorHook } from 'react-redux';
 
 export const store = configureStore({
   reducer: {
     user: userReducer,
+    articles: articleReducer,
   },
 });
 
@@ -14,3 +16,4 @@ export type AppDispatch = typeof store.dispatch;
 
 export const useAppDispatch = () => useReduxDispatch<AppDispatch>();
 export const useAppSelector: TypedUseSelectorHook<RootState> = useReduxSelector;
+

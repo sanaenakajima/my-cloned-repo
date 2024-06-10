@@ -2,9 +2,13 @@
 import React from 'react';
 import InputField from '../atoms/InputField';
 
-interface LoginInputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
+interface LoginInputFieldProps {
   label: string;
-  error?: string;
+  type: React.HTMLInputTypeAttribute; // 必須に設定
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  error: string;
+  className?: string;
 }
 
 const LoginInputField: React.FC<LoginInputFieldProps> = (props) => {
@@ -12,3 +16,4 @@ const LoginInputField: React.FC<LoginInputFieldProps> = (props) => {
 };
 
 export default LoginInputField;
+

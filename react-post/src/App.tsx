@@ -7,6 +7,8 @@ import TopPage from './pages/TopPage';
 import RegisterPage from './pages/RegisterPage';
 import MyPage from './pages/MyPage';
 import HeaderLayout from './pages/HeaderLayout';
+import CreateArticlePage from './pages/CreateArticlePage';
+import ArticleDetailPage from './pages/ArticleDetailPage'; // 追加
 
 const App: React.FC = () => {
   return (
@@ -16,11 +18,16 @@ const App: React.FC = () => {
           <Route index element={<TopPage />} />
           <Route path="register" element={<RegisterPage />} />
           <Route path="login" element={<LoginPage />} />
-          <Route path="register" element={<RegisterPage />} />
           <Route path="my-page" element={<MyPage />} />
+          <Route path="create-article" element={<CreateArticlePage />} />
+          <Route path="article-list" element={<TopPage />} />
+          <Route path="articles/:articleId" element={<ArticleDetailPage />} /> {/* 追加 */}
         </Route>
       </Routes>
     </Router>
   );
 };
+
 export default App;
+
+

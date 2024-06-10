@@ -5,8 +5,15 @@ import { rest } from 'msw';
 const usersKey = 'mockUsers';
 let users = JSON.parse(localStorage.getItem(usersKey)) || [];
 
+const articlesKey = 'mockArticles';
+let articles = JSON.parse(localStorage.getItem(articlesKey)) || [];
+
 const saveUsers = () => {
   localStorage.setItem(usersKey, JSON.stringify(users));
+};
+
+const saveArticles = () => {
+  localStorage.setItem(articlesKey, JSON.stringify(articles));
 };
 
 export const handlers = [
@@ -57,5 +64,27 @@ export const handlers = [
         ctx.json({ message: 'User not found' })
       );
     }
+  }),
+
+  rest.post('http://localhost:5000/articles', async (req, res, ctx) => {
+    const { title, content } = await req.json();
+
+    const newArticle = {
+      article_id: `article_${Date.now()}`,
+      title,
+      content,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+
+    articles.push(newArticle);
+    saveArticles(); // 記事を保存
+
+    console.log('Created articles:', articles);  // Debugging line
+
+    return res(
+      ctx.status(201),
+      ctx.json(newArticle)
+    );
   }),
 ];
