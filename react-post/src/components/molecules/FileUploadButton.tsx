@@ -27,13 +27,15 @@ const FileUploadButton: React.FC<FileUploadButtonProps> = ({ onFileSelect, image
     }
   };
 
+  const displayImageUrl = imageUrl.startsWith('data:image') ? imageUrl : "/icons/usericon2.png";
+
   return (
     <div className={`file-upload-button ${className}`}>
       <Label htmlFor="file-upload" className="block text-gray-700 text-sm text-left font-bold mb-2">
         ユーザーアイコン画像
       </Label>
       <label htmlFor="file-upload" className="cursor-pointer inline-block">
-        <img src={imageUrl} className="w-32 h-32 object-cover rounded-full mb-2" alt="User Icon" />
+        <img src={displayImageUrl} className="w-32 h-32 object-cover rounded-full mb-2" alt="User Icon" />
         <input type="file" id="file-upload" className="hidden" onChange={handleFileChange} />
       </label>
       <div className="text-sm text-gray-600">タップして画像を変更</div>
@@ -43,5 +45,8 @@ const FileUploadButton: React.FC<FileUploadButtonProps> = ({ onFileSelect, image
 };
 
 export default FileUploadButton;
+
+
+
 
 

@@ -1,14 +1,26 @@
 // src/store/articleSlice.ts
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
+interface Article {
+  article_id: number;
+  title: string;
+  content: string;
+  created_at: string;
+  updated_at: string;
+}
+
 interface ArticleState {
-  articles: any[];
+  articles: Article[];
+  currentPage: number;
+  totalPages: number;
   status: string;
   error: string | null;
 }
 
 const initialState: ArticleState = {
   articles: [],
+  currentPage: 1,
+  totalPages: 1,
   status: 'idle',
   error: null,
 };
@@ -47,10 +59,26 @@ export const createArticle = createAsyncThunk(
   }
 );
 
+export const fetchArticles = createAsyncThunk(
+  'articles/fetchArticles',
+  async (page: number) => {
+    const response = await fetch(`/article?page=${page}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data;
+  }
+);
+
 const articleSlice = createSlice({
   name: 'articles',
   initialState,
-  reducers: {},
+  reducers: {
+    setCurrentPage(state, action) {
+      state.currentPage = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(createArticle.pending, (state) => {
@@ -63,11 +91,26 @@ const articleSlice = createSlice({
       .addCase(createArticle.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload as string;
+      })
+      .addCase(fetchArticles.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchArticles.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.articles = action.payload.data;
+        state.totalPages = action.payload.last_page;
+      })
+      .addCase(fetchArticles.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message || 'Something went wrong';
       });
   },
 });
 
+export const { setCurrentPage } = articleSlice.actions;
+
 export default articleSlice.reducer;
+
 
 
 

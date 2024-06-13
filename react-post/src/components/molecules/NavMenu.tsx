@@ -30,7 +30,7 @@ const NavMenu: React.FC<NavMenuProps> = ({ isLoggedIn, onLogout }) => {
                             <>
                                 <Link to="/create-article" className="block py-2 px-4 text-white">新規投稿画面</Link>
                                 <Link to="/article-list" className="block py-2 px-4 text-white">投稿一覧画面</Link>
-                                <Link to="/profile" className="block py-2 px-4 text-white">会員情報変更</Link>
+                                <Link to="/update-profile" className="block py-2 px-4 text-white">会員情報変更</Link>
                                 <Link to="/my-page" className="block py-2 px-4 text-white">マイページ</Link>
                                 <button onClick={onLogout} className="block py-2 px-4 text-white">ログアウト</button>
                             </>
@@ -50,7 +50,7 @@ const NavMenu: React.FC<NavMenuProps> = ({ isLoggedIn, onLogout }) => {
                     <>
                         <Link to="/create-article" className="py-2 px-4 text-white hover:bg-navy-700 rounded">新規投稿画面</Link>
                         <Link to="/article-list" className="py-2 px-4 text-white hover:bg-navy-700 rounded">投稿一覧画面</Link>
-                        <Link to="/profile" className="py-2 px-4 text-white hover:bg-navy-700 rounded">会員情報変更</Link>
+                        <Link to="/update-profile" className="py-2 px-4 text-white hover:bg-navy-700 rounded">会員情報変更</Link>
                         <Link to="/my-page" className="py-2 px-4 text-white hover:bg-navy-700 rounded">マイページ</Link>
                         <button onClick={onLogout} className="py-2 px-4 text-white hover:bg-navy-700 rounded">ログアウト</button>
                     </>

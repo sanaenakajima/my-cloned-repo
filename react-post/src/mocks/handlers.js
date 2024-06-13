@@ -1,20 +1,33 @@
 // src/mocks/handlers.js
 import { rest } from 'msw';
 
-// ローカルストレージからユーザーデータを読み込む
+// ローカルストレージキーの定義
 const usersKey = 'mockUsers';
-let users = JSON.parse(localStorage.getItem(usersKey)) || [];
-
 const articlesKey = 'mockArticles';
-let articles = JSON.parse(localStorage.getItem(articlesKey)) || [];
 
-const saveUsers = () => {
-  localStorage.setItem(usersKey, JSON.stringify(users));
+// ローカルストレージからデータを読み込む関数
+const loadFromLocalStorage = (key) => JSON.parse(localStorage.getItem(key)) || [];
+
+// ローカルストレージにデータを書き込む関数
+const saveToLocalStorage = (key, data) => localStorage.setItem(key, JSON.stringify(data));
+
+// データの初期化
+let users = loadFromLocalStorage(usersKey);
+let articles = loadFromLocalStorage(articlesKey);
+
+// テスト用のユーザーデータを追加（必要に応じて既存のデータに追加）
+const testUser = {
+  user_id: 'example-user-id',
+  name: 'リアクト太郎',
+  email: 'react.tarou@example.com',
+  password: 'password123',
+  representative_image: '' // 画像がない場合をシミュレート
 };
 
-const saveArticles = () => {
-  localStorage.setItem(articlesKey, JSON.stringify(articles));
-};
+if (!users.some(user => user.user_id === testUser.user_id)) {
+  users.push(testUser);
+  saveToLocalStorage(usersKey, users);
+}
 
 export const handlers = [
   rest.post('/user', async (req, res, ctx) => {
@@ -33,9 +46,7 @@ export const handlers = [
     };
 
     users.push(newUser);
-    saveUsers(); // ユーザーを保存
-
-    console.log('Registered users:', users);  // Debugging line
+    saveToLocalStorage(usersKey, users);
 
     return res(
       ctx.status(201),
@@ -46,11 +57,7 @@ export const handlers = [
   rest.post('/login', async (req, res, ctx) => {
     const { email, password } = await req.json();
 
-    // ログイン時にローカルストレージからユーザーを再読み込みする
-    users = JSON.parse(localStorage.getItem(usersKey)) || [];
-    console.log('Current users:', users);  // Debugging line
-    console.log('Login attempt with:', { email, password });  // Debugging line
-
+    users = loadFromLocalStorage(usersKey);
     const user = users.find(user => user.email === email && user.password === password);
 
     if (user) {
@@ -78,13 +85,89 @@ export const handlers = [
     };
 
     articles.push(newArticle);
-    saveArticles(); // 記事を保存
-
-    console.log('Created articles:', articles);  // Debugging line
+    saveToLocalStorage(articlesKey, articles);
 
     return res(
       ctx.status(201),
       ctx.json(newArticle)
     );
   }),
+
+  rest.get('/article', (req, res, ctx) => {
+    const page = parseInt(req.url.searchParams.get('page')) || 1;
+    const pageSize = 20;
+    const paginatedArticles = articles.slice((page - 1) * pageSize, page * pageSize);
+
+    return res(
+      ctx.status(200),
+      ctx.json({
+        total: articles.length,
+        per_page: pageSize,
+        current_page: page,
+        last_page: Math.ceil(articles.length / pageSize),
+        first_page_url: `/article?page=1`,
+        last_page_url: `/article?page=${Math.ceil(articles.length / pageSize)}`,
+        next_page_url: page < Math.ceil(articles.length / pageSize) ? `/article?page=${page + 1}` : null,
+        prev_page_url: page > 1 ? `/article?page=${page - 1}` : null,
+        path: `/article`,
+        from: (page - 1) * pageSize + 1,
+        to: Math.min(page * pageSize, articles.length),
+        data: paginatedArticles,
+      })
+    );
+  }),
+
+  // ユーザー情報取得のハンドラーを追加
+  rest.get('/user/:userId', (req, res, ctx) => {
+    const { userId } = req.params;
+    const user = users.find(user => user.user_id === userId);
+
+    if (user) {
+      return res(
+        ctx.status(200),
+        ctx.json({
+          name: user.name,
+          email: user.email,
+          representative_image: user.representative_image,
+        })
+      );
+    } else {
+      return res(
+        ctx.status(404),
+        ctx.json({ message: 'User not found' })
+      );
+    }
+  }),
+
+  // ユーザー情報更新のハンドラーを追加
+  rest.put('/user/:userId', async (req, res, ctx) => {
+    const { userId } = req.params;
+    const { email, nickname, representative_image } = await req.json();
+
+    users = loadFromLocalStorage(usersKey);
+    const userIndex = users.findIndex(user => user.user_id === userId);
+
+    if (userIndex === -1) {
+      return res(
+        ctx.status(404),
+        ctx.json({ message: 'User not found' })
+      );
+    }
+
+    users[userIndex] = {
+      ...users[userIndex],
+      email,
+      nickname,
+      representative_image,
+      updated_at: new Date().toISOString(),
+    };
+    
+    saveToLocalStorage(usersKey, users);
+
+    return res(
+      ctx.status(204)
+    );
+  })
 ];
+
+

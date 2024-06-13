@@ -1,26 +1,27 @@
-// src/components/organisms/RegisterForm.tsx
+//src/components/organisms/UpdateProFileForm
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState, useAppDispatch } from '../../store/store';
-import RegisterFormFields from '../molecules/RegisterFormFields';
-import { setEmail, setPassword, setPasswordConfirm, setNickname, setUserIcon, setErrors, register } from '../../store/userSlice';
+import { setEmail, setNickname, setUserIcon, setErrors, updateUser } from '../../store/userSlice';
 import { PayloadAction } from '@reduxjs/toolkit';
+import { useNavigate } from 'react-router-dom';
 import Button from '../atoms/Button';
+import UpdateProfileFormFields from '../molecules/UpdateProfileFormFields';
 
-const RegisterForm: React.FC = () => {
+const UpdateProfileForm: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { email, password, passwordConfirm, nickname, userIcon, errors } = useSelector((state: RootState) => state.user);
+  const { email, nickname, userIcon, errors } = useSelector((state: RootState) => state.user);
   const [imagePreviewUrl, setImagePreviewUrl] = useState(userIcon);
   const [isFormValid, setIsFormValid] = useState(true);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
 
   useEffect(() => {
     if (isSubmitted) {
       validateForm();
     }
-  }, [email, password, passwordConfirm, nickname, userIcon]);
+  }, [email, nickname, userIcon]);
 
   const handleFileChange = (base64: string | null, fileName: string | null) => {
     setImagePreviewUrl(base64);
@@ -54,25 +55,6 @@ const RegisterForm: React.FC = () => {
       isValid = false;
     }
 
-    if (!password) {
-      newErrors.password = '入力してください';
-      isValid = false;
-    } else if (password.length < 8) {
-      newErrors.password = '8文字以上で入力してください';
-      isValid = false;
-    }
-
-    if (!passwordConfirm) {
-      newErrors.passwordConfirm = '入力してください';
-      isValid = false;
-    } else if (password !== passwordConfirm) {
-      newErrors.passwordConfirm = 'パスワードの値が一致しません';
-      isValid = false;
-    } else if (passwordConfirm.length < 8) {
-      newErrors.passwordConfirm = '8文字以上で入力してください';
-      isValid = false;
-    }
-
     if (!nickname) {
       newErrors.nickname = '入力してください';
       isValid = false;
@@ -91,25 +73,24 @@ const RegisterForm: React.FC = () => {
     return isValid;
   };
 
-  const handleRegister = async () => {
+  const handleUpdate = async () => {
     setIsSubmitted(true);
     if (!validateForm()) {
       return;
     }
     const userData = {
-      name: nickname,
       email,
-      password: password!,
-      password_confirmation: passwordConfirm!,
+      nickname,
       representative_image: userIcon ? userIcon.split(',')[1] : ''
     };
-    console.log('Registering user:', userData);
+    console.log('Updating user:', userData);
 
     try {
-      await dispatch(register(userData)).unwrap();
-      navigate('/my-page'); // 会員登録後にマイページに遷移
+      await dispatch(updateUser(userData)).unwrap();
+      navigate('/my-page'); // 成功時にマイページに遷移
     } catch (err) {
-      console.error('Registration failed:', err);
+      console.error('Update failed:', err);
+      setMessage('更新に失敗しました。再度お試しください。');
     }
   };
 
@@ -123,11 +104,10 @@ const RegisterForm: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-start pt-20">
       <div className="w-full max-w-lg text-center p-6">
-        <h1 className="text-3xl tablet:text-4xl laptop:text-5xl font-bold mb-8 text-navy-800">会員登録</h1>
-        <RegisterFormFields
+        <h1 className="text-3xl tablet:text-4xl laptop:text-5xl font-bold mb-8 text-navy-800">会員情報変更</h1>
+        {message && <p className="mb-4 text-red-600">{message}</p>}
+        <UpdateProfileFormFields
           email={email}
-          password={password}
-          passwordConfirm={passwordConfirm}
           nickname={nickname}
           imagePreviewUrl={imagePreviewUrl}
           errors={errors}
@@ -135,19 +115,18 @@ const RegisterForm: React.FC = () => {
           onFileChange={handleFileChange}
         />
         <Button
-          onClick={handleRegister}
+          onClick={handleUpdate}
           disabled={!isFormValid}
           className={`bg-navy-700 hover:bg-navy-900 text-white font-bold py-3 px-6 rounded ${!isFormValid && 'opacity-50 cursor-not-allowed'}`}
         >
-          登録する
+          変更する
         </Button>
       </div>
     </div>
   );
 };
 
-export default RegisterForm;
-
+export default UpdateProfileForm;
 
 
 

@@ -1,4 +1,3 @@
-// src/store/userSlice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 
 interface UserState {
@@ -18,6 +17,11 @@ interface UserState {
     userIcon: string;
     general: string;
   };
+  userInfo: {
+    name: string;
+    email: string;
+    representative_image: string;
+  } | null;
 }
 
 const initialState: UserState = {
@@ -36,7 +40,8 @@ const initialState: UserState = {
     nickname: '',
     userIcon: '',
     general: ''
-  }
+  },
+  userInfo: null,
 };
 
 export const register = createAsyncThunk(
@@ -78,7 +83,48 @@ export const login = createAsyncThunk(
     const tokenExpiry = Date.now() + 60 * 60 * 1000; // 60分後
     localStorage.setItem('access_token', data.user.token);
     localStorage.setItem('token_expiry', tokenExpiry.toString());
+    localStorage.setItem('user_id', data.user.user_id); // ユーザーIDを保存
     return { token: data.user.token, tokenExpiry };
+  }
+);
+
+export const fetchUser = createAsyncThunk(
+  'user/fetchUser',
+  async (userId: string) => {
+    const response = await fetch(`/user/${userId}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data;
+  }
+);
+
+export const updateUser = createAsyncThunk(
+  'user/updateUser',
+  async (userData: { email: string; nickname: string; representative_image: string }, { rejectWithValue }) => {
+    const userId = localStorage.getItem('user_id');
+    if (!userId) {
+      return rejectWithValue('User ID not found');
+    }
+    const response = await fetch(`/user/${userId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(userData),
+    });
+    if (!response.ok) {
+      try {
+        const errorData = await response.json();
+        return rejectWithValue(errorData.message || 'Failed to update user');
+      } catch {
+        return rejectWithValue('Failed to update user');
+      }
+    }
+    // 204 No Content の場合、レスポンスボディは存在しないのでそのまま返す
+    if (response.status === 204) {
+      return;
+    }
+    return await response.json();
   }
 );
 
@@ -139,9 +185,38 @@ const userSlice = createSlice({
       .addCase(login.rejected, (state, action) => {
         state.status = 'failed';
         state.errors.general = action.error.message || 'Failed to login';
+      })
+      .addCase(fetchUser.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchUser.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.userInfo = action.payload;
+      })
+      .addCase(fetchUser.rejected, (state, action) => {
+        state.status = 'failed';
+        state.errors.general = action.error.message || 'Failed to fetch user';
+      })
+      .addCase(updateUser.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(updateUser.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        // state.userInfoの更新を行う
+        if (action.payload) {
+          state.userInfo = { ...state.userInfo, ...action.payload };
+        }
+      })
+      .addCase(updateUser.rejected, (state, action) => {
+        state.status = 'failed';
+        state.errors.general = action.payload as string;
       });
-  },
+  }
 });
 
 export const { setEmail, setPassword, setPasswordConfirm, setNickname, setUserIcon, setErrors, clearErrors, logout } = userSlice.actions;
 export default userSlice.reducer;
+
+
+
+
