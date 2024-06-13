@@ -1,3 +1,4 @@
+//src/components/atoms/Icon
 import React from 'react';
 
 interface IconProps {

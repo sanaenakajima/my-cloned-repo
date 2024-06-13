@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import axios from 'axios';
 
 interface UserState {
   email: string;
@@ -47,56 +48,60 @@ const initialState: UserState = {
 export const register = createAsyncThunk(
   'user/register',
   async (userData: { name: string; email: string; password: string; password_confirmation: string; representative_image: string }, { dispatch }) => {
-    const response = await fetch('/user', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(userData),
-    });
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Failed to register');
+    try {
+      const response = await axios.post('/user', userData);
+      const data = response.data;
+      const tokenExpiry = Date.now() + 60 * 60 * 1000; // 60分後
+      localStorage.setItem('access_token', data.token);
+      localStorage.setItem('token_expiry', tokenExpiry.toString());
+
+      dispatch(login({ email: userData.email, password: userData.password }));
+
+      return data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        throw new Error(error.response.data.message || 'Failed to register');
+      } else {
+        throw new Error('Failed to register');
+      }
     }
-    const data = await response.json();
-    const tokenExpiry = Date.now() + 60 * 60 * 1000; // 60分後
-    localStorage.setItem('access_token', data.token);
-    localStorage.setItem('token_expiry', tokenExpiry.toString());
-
-    dispatch(login({ email: userData.email, password: userData.password }));
-
-    return data;
   }
 );
 
 export const login = createAsyncThunk(
   'user/login',
   async (credentials: { email: string; password: string }) => {
-    const response = await fetch('/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(credentials),
-    });
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Failed to login');
+    try {
+      const response = await axios.post('/login', credentials);
+      const data = response.data;
+      const tokenExpiry = Date.now() + 60 * 60 * 1000; // 60分後
+      localStorage.setItem('access_token', data.user.token);
+      localStorage.setItem('token_expiry', tokenExpiry.toString());
+      localStorage.setItem('user_id', data.user.user_id); // ユーザーIDを保存
+      return { token: data.user.token, tokenExpiry };
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        throw new Error(error.response.data.message || 'Failed to login');
+      } else {
+        throw new Error('Failed to login');
+      }
     }
-    const data = await response.json();
-    const tokenExpiry = Date.now() + 60 * 60 * 1000; // 60分後
-    localStorage.setItem('access_token', data.user.token);
-    localStorage.setItem('token_expiry', tokenExpiry.toString());
-    localStorage.setItem('user_id', data.user.user_id); // ユーザーIDを保存
-    return { token: data.user.token, tokenExpiry };
   }
 );
 
 export const fetchUser = createAsyncThunk(
   'user/fetchUser',
   async (userId: string) => {
-    const response = await fetch(`/user/${userId}`);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+    try {
+      const response = await axios.get(`/user/${userId}`);
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        throw new Error(`HTTP error! status: ${error.response.status}`);
+      } else {
+        throw new Error('Failed to fetch user');
+      }
     }
-    const data = await response.json();
-    return data;
   }
 );
 
@@ -107,24 +112,19 @@ export const updateUser = createAsyncThunk(
     if (!userId) {
       return rejectWithValue('User ID not found');
     }
-    const response = await fetch(`/user/${userId}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(userData),
-    });
-    if (!response.ok) {
-      try {
-        const errorData = await response.json();
-        return rejectWithValue(errorData.message || 'Failed to update user');
-      } catch {
+    try {
+      const response = await axios.put(`/user/${userId}`, userData);
+      if (response.status === 204) {
+        return;
+      }
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        return rejectWithValue(error.response.data.message || 'Failed to update user');
+      } else {
         return rejectWithValue('Failed to update user');
       }
     }
-    // 204 No Content の場合、レスポンスボディは存在しないのでそのまま返す
-    if (response.status === 204) {
-      return;
-    }
-    return await response.json();
   }
 );
 

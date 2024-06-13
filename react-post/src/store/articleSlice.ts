@@ -1,5 +1,6 @@
 // src/store/articleSlice.ts
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import axios from 'axios';
 
 interface Article {
   article_id: number;
@@ -13,37 +14,47 @@ interface ArticleState {
   articles: Article[];
   currentPage: number;
   totalPages: number;
-  status: string;
+  totalItems: number;
+  perPage: number;
+  nextPageUrl: string | null;
+  prevPageUrl: string | null;
+  firstPageUrl: string | null;
+  lastPageUrl: string | null;
+  status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | null;
+  from: number | null;
+  to: number | null;
 }
 
 const initialState: ArticleState = {
   articles: [],
   currentPage: 1,
   totalPages: 1,
+  totalItems: 0,
+  perPage: 15,
+  nextPageUrl: null,
+  prevPageUrl: null,
+  firstPageUrl: null,
+  lastPageUrl: null,
   status: 'idle',
   error: null,
+  from: null,
+  to: null,
 };
 
 export const createArticle = createAsyncThunk(
   'articles/createArticle',
   async (article: { title: string; content: string }, { rejectWithValue }) => {
     try {
-      const response = await fetch('http://localhost:5000/articles', { // フルURLに修正
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(article),
-      });
+      const response = await axios.post('http://localhost:5000/articles', article);
 
-      if (!response.ok) {
+      if (response.status !== 201) {
         const errorMessage = `Failed with status: ${response.status}`;
         console.error(errorMessage);
         return rejectWithValue(errorMessage);
       }
 
-      const data = await response.json();
+      const data = response.data;
       if (!data.article_id) {
         const errorMessage = 'Invalid response format';
         console.error(errorMessage);
@@ -62,12 +73,13 @@ export const createArticle = createAsyncThunk(
 export const fetchArticles = createAsyncThunk(
   'articles/fetchArticles',
   async (page: number) => {
-    const response = await fetch(`/article?page=${page}`);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+    try {
+      const response = await axios.get(`http://localhost:5000/articles?page=${page}`);
+      return response.data;
+    } catch (error) {
+      const errorResponse = error as any;
+      throw new Error(`HTTP error! status: ${errorResponse.response?.status}`);
     }
-    const data = await response.json();
-    return data;
   }
 );
 
@@ -75,7 +87,7 @@ const articleSlice = createSlice({
   name: 'articles',
   initialState,
   reducers: {
-    setCurrentPage(state, action) {
+    setCurrentPage(state, action: PayloadAction<number>) {
       state.currentPage = action.payload;
     },
   },
@@ -98,7 +110,16 @@ const articleSlice = createSlice({
       .addCase(fetchArticles.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.articles = action.payload.data;
+        state.currentPage = action.payload.current_page;
         state.totalPages = action.payload.last_page;
+        state.totalItems = action.payload.total;
+        state.perPage = action.payload.per_page;
+        state.nextPageUrl = action.payload.next_page_url;
+        state.prevPageUrl = action.payload.prev_page_url;
+        state.firstPageUrl = action.payload.first_page_url;
+        state.lastPageUrl = action.payload.last_page_url;
+        state.from = action.payload.from;
+        state.to = action.payload.to;
       })
       .addCase(fetchArticles.rejected, (state, action) => {
         state.status = 'failed';
@@ -110,6 +131,9 @@ const articleSlice = createSlice({
 export const { setCurrentPage } = articleSlice.actions;
 
 export default articleSlice.reducer;
+
+
+
 
 
 

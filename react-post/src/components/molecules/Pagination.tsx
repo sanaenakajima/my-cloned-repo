@@ -1,3 +1,4 @@
+// src/components/molecules/Pagination.tsx
 import React from 'react';
 import Button from '../atoms/Button';
 
@@ -5,17 +6,24 @@ interface PaginationProps {
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
+  firstPageUrl: string | null;
+  lastPageUrl: string | null;
+  prevPageUrl: string | null;
+  nextPageUrl: string | null;
 }
 
-const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPageChange }) => {
+const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPageChange, firstPageUrl, lastPageUrl, prevPageUrl, nextPageUrl }) => {
   const pageNumbers = [];
-  for (let i = 1; i <= Math.min(5, totalPages); i++) {
+  const startPage = Math.max(1, currentPage - 2); 
+  const endPage = Math.min(totalPages, startPage + 4); 
+
+  for (let i = startPage; i <= endPage; i++) {
     pageNumbers.push(i);
   }
 
   return (
     <div className="flex justify-center my-4">
-      <Button onClick={() => onPageChange(currentPage - 1)} disabled={currentPage === 1}>
+      <Button onClick={() => onPageChange(currentPage - 1)} disabled={!prevPageUrl}>
         ◀
       </Button>
       {pageNumbers.map(number => (
@@ -23,7 +31,7 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPage
           {number}
         </Button>
       ))}
-      <Button onClick={() => onPageChange(currentPage + 1)} disabled={currentPage === totalPages}>
+      <Button onClick={() => onPageChange(currentPage + 1)} disabled={!nextPageUrl}>
         ▶
       </Button>
     </div>
@@ -31,5 +39,9 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPage
 };
 
 export default Pagination;
+
+
+
+
 
 

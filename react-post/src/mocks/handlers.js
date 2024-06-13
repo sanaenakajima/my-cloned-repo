@@ -93,9 +93,10 @@ export const handlers = [
     );
   }),
 
-  rest.get('/article', (req, res, ctx) => {
+  // URLを修正して、正しいエンドポイントに一致させる
+  rest.get('http://localhost:5000/articles', (req, res, ctx) => {
     const page = parseInt(req.url.searchParams.get('page')) || 1;
-    const pageSize = 20;
+    const pageSize = 15;
     const paginatedArticles = articles.slice((page - 1) * pageSize, page * pageSize);
 
     return res(
@@ -105,11 +106,11 @@ export const handlers = [
         per_page: pageSize,
         current_page: page,
         last_page: Math.ceil(articles.length / pageSize),
-        first_page_url: `/article?page=1`,
-        last_page_url: `/article?page=${Math.ceil(articles.length / pageSize)}`,
-        next_page_url: page < Math.ceil(articles.length / pageSize) ? `/article?page=${page + 1}` : null,
-        prev_page_url: page > 1 ? `/article?page=${page - 1}` : null,
-        path: `/article`,
+        first_page_url: `/articles?page=1`,
+        last_page_url: `/articles?page=${Math.ceil(articles.length / pageSize)}`,
+        next_page_url: page < Math.ceil(articles.length / pageSize) ? `/articles?page=${page + 1}` : null,
+        prev_page_url: page > 1 ? `/articles?page=${page - 1}` : null,
+        path: `/articles`,
         from: (page - 1) * pageSize + 1,
         to: Math.min(page * pageSize, articles.length),
         data: paginatedArticles,
@@ -169,5 +170,3 @@ export const handlers = [
     );
   })
 ];
-
-
