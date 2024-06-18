@@ -1,4 +1,4 @@
-//src/components/organisms/UpdateProFileForm
+// src/components/organisms/UpdateProfileForm.tsx
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState, useAppDispatch } from '../../store/store';
@@ -7,6 +7,7 @@ import { PayloadAction } from '@reduxjs/toolkit';
 import { useNavigate } from 'react-router-dom';
 import Button from '../atoms/Button';
 import UpdateProfileFormFields from '../molecules/UpdateProfileFormFields';
+import Title from '../atoms/Title';
 
 const UpdateProfileForm: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -103,8 +104,8 @@ const UpdateProfileForm: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-start pt-20">
+      <Title text="会員情報変更" className="mb-8 text-center" />
       <div className="w-full max-w-lg text-center p-6">
-        <h1 className="text-3xl tablet:text-4xl laptop:text-5xl font-bold mb-8 text-navy-800">会員情報変更</h1>
         {message && <p className="mb-4 text-red-600">{message}</p>}
         <UpdateProfileFormFields
           email={email}
@@ -127,6 +128,7 @@ const UpdateProfileForm: React.FC = () => {
 };
 
 export default UpdateProfileForm;
+
 
 
 

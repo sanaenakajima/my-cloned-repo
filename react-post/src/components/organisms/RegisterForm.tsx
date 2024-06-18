@@ -123,7 +123,7 @@ const RegisterForm: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-start pt-20">
       <div className="w-full max-w-lg text-center p-6">
-        <h1 className="text-3xl tablet:text-4xl laptop:text-5xl font-bold mb-8 text-navy-800">会員登録</h1>
+        <h1 className="text-2xl tablet:text-4xl laptop:text-5xl font-bold mb-7 text-navy-800">会員登録</h1>
         <RegisterFormFields
           email={email}
           password={password}

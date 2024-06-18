@@ -14,6 +14,15 @@ module.exports = {
           800: '#14213D',
           900: '#0D1321',
         },
+        teal: {
+          500: '#008080',
+        },
+        gold: {
+          500: '#FFD700',
+        },
+        lightGray: {
+          500: '#f5f5f5',
+        },
       },
       screens: {
         'tablet': '600px',

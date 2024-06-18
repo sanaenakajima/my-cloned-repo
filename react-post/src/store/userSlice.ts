@@ -1,3 +1,4 @@
+// src/store/userSlice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
 
@@ -19,6 +20,7 @@ interface UserState {
     general: string;
   };
   userInfo: {
+    user_id: string;
     name: string;
     email: string;
     representative_image: string;
@@ -42,7 +44,7 @@ const initialState: UserState = {
     userIcon: '',
     general: ''
   },
-  userInfo: null,
+  userInfo: localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')!) : null,
 };
 
 export const register = createAsyncThunk(
@@ -78,7 +80,7 @@ export const login = createAsyncThunk(
       localStorage.setItem('access_token', data.user.token);
       localStorage.setItem('token_expiry', tokenExpiry.toString());
       localStorage.setItem('user_id', data.user.user_id); // ユーザーIDを保存
-      return { token: data.user.token, tokenExpiry };
+      return { token: data.user.token, tokenExpiry, userInfo: data.user };
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         throw new Error(error.response.data.message || 'Failed to login');
@@ -158,6 +160,7 @@ const userSlice = createSlice({
       state.tokenExpiry = null;
       localStorage.removeItem('access_token');
       localStorage.removeItem('token_expiry');
+      localStorage.removeItem('userInfo');
     },
   },
   extraReducers: (builder) => {
@@ -180,6 +183,8 @@ const userSlice = createSlice({
         state.status = 'succeeded';
         state.token = action.payload.token;
         state.tokenExpiry = action.payload.tokenExpiry;
+        state.userInfo = action.payload.userInfo;
+        localStorage.setItem('userInfo', JSON.stringify(action.payload.userInfo));
         state.errors.general = '';
       })
       .addCase(login.rejected, (state, action) => {
@@ -192,6 +197,7 @@ const userSlice = createSlice({
       .addCase(fetchUser.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.userInfo = action.payload;
+        localStorage.setItem('userInfo', JSON.stringify(action.payload));
       })
       .addCase(fetchUser.rejected, (state, action) => {
         state.status = 'failed';
@@ -202,9 +208,9 @@ const userSlice = createSlice({
       })
       .addCase(updateUser.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        // state.userInfoの更新を行う
         if (action.payload) {
           state.userInfo = { ...state.userInfo, ...action.payload };
+          localStorage.setItem('userInfo', JSON.stringify(state.userInfo));
         }
       })
       .addCase(updateUser.rejected, (state, action) => {
@@ -216,7 +222,6 @@ const userSlice = createSlice({
 
 export const { setEmail, setPassword, setPasswordConfirm, setNickname, setUserIcon, setErrors, clearErrors, logout } = userSlice.actions;
 export default userSlice.reducer;
-
 
 
 

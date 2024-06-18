@@ -6,6 +6,7 @@ import { fetchArticles, setCurrentPage } from '../../store/articleSlice';
 import { useNavigate } from 'react-router-dom';
 import ArticleSummary from '../molecules/ArticleSummary';
 import Pagination from '../molecules/Pagination';
+import LoadingSpinner from '../atoms/LoadingSpinner';
 
 const ArticleList: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -39,54 +40,64 @@ const ArticleList: React.FC = () => {
   };
 
   return (
-    <div>
-      {status === 'loading' && <div>Loading...</div>}
-      {status === 'failed' && <div>Error: {error}</div>}
+    <div className="min-h-screen bg-gray-100 py-8 flex flex-col items-center">
+      {status === 'loading' && (
+        <div className="flex justify-center items-center min-h-screen">
+          <LoadingSpinner />
+        </div>
+      )}
+      {status === 'failed' && <div className="text-red-500">Error: {error}</div>}
       {status === 'succeeded' && (
-        <>
+        <div className="container mx-auto p-4 max-w-screen-lg">
           <div className="text-center mb-4">
             全 {totalItems} 件中 {from} - {to} 件表示
           </div>
-          <table className="min-w-full bg-white table-fixed border-collapse">
-            <thead>
-              <tr className="bg-gray-100">
-                <th className="w-1/3 py-2 px-4 text-left border-r border-gray-200">タイトル</th>
-                <th className="w-2/3 py-2 px-4 text-left">投稿内容</th>
-              </tr>
-            </thead>
-            <tbody>
-              {articles.map((article) => (
-                <ArticleSummary
-                  key={article.article_id}
-                  title={article.title}
-                  content={article.content}
+          <div className="bg-white p-4 rounded-lg shadow-md overflow-hidden">
+            <div className="grid grid-cols-2 bg-navy-700 text-white p-2 rounded-t-lg">
+              <div className="py-2 px-4">タイトル</div>
+              <div className="py-2 px-4">投稿内容</div>
+            </div>
+            {articles.map((article) => {
+              if (article.article_id == null) {
+                console.error("記事IDがnullです:", article);
+              }
+              return (
+                <div 
+                  key={article.article_id} 
+                  className="grid grid-cols-2 border-b border-gray-200 p-4 hover:bg-gray-50 cursor-pointer transition-colors"
                   onClick={() => handleArticleClick(article.article_id)}
-                />
-              ))}
-              {[...Array(perPage - articles.length)].map((_, index) => (
-                <tr key={`empty-row-${index}`} className="border-b border-gray-200">
-                  <td className="py-2 px-4 text-left border-r border-gray-200">&nbsp;</td>
-                  <td className="py-2 px-4 text-left">&nbsp;</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <Pagination 
-            currentPage={currentPage} 
-            totalPages={totalPages} 
-            onPageChange={handlePageChange} 
-            firstPageUrl={firstPageUrl}
-            lastPageUrl={lastPageUrl}
-            prevPageUrl={prevPageUrl}
-            nextPageUrl={nextPageUrl}
-          />
-        </>
+                >
+                  <div className="py-2 px-4 font-bold">{article.title}</div>
+                  <div className="py-2 px-4 text-gray-700">{article.content}</div>
+                </div>
+              );
+            })}
+          </div>
+          <div className="mt-8">
+            <Pagination 
+              currentPage={currentPage} 
+              totalPages={totalPages} 
+              onPageChange={handlePageChange} 
+              firstPageUrl={firstPageUrl}
+              lastPageUrl={lastPageUrl}
+              prevPageUrl={prevPageUrl}
+              nextPageUrl={nextPageUrl}
+            />
+          </div>
+        </div>
       )}
     </div>
   );
 };
 
 export default ArticleList;
+
+
+
+
+
+
+
 
 
 

@@ -8,7 +8,7 @@ const TopPage: React.FC = () => {
     const isLoggedIn = useAppSelector(state => Boolean(state.user.token));
 
     return (
-        <div className="min-h-screen bg-white flex flex-col items-center justify-start pt-20">
+        <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-start pt-20">
             <div className="w-full max-w-2xl text-center p-6">
                 <h1 className="text-3xl tablet:text-4xl laptop:text-5xl font-bold mb-8 text-navy-800">ブログサービス課題</h1>
                 <p className="mb-12 text-base tablet:text-lg laptop:text-xl text-navy-600">React.jsを利用したブログサービス課題です。</p>

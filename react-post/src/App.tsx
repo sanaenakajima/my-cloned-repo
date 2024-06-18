@@ -9,7 +9,7 @@ import MyPage from './pages/MyPage';
 import HeaderLayout from './pages/HeaderLayout';
 import CreateArticlePage from './pages/CreateArticlePage';
 import ArticleDetailPage from './pages/ArticleDetailPage';
-import ArticleListPage from './pages/ArticleListPage'; // 無効になっているインポートを修正
+import ArticleListPage from './pages/ArticleListPage';
 import UpdateProfilePage from './pages/UpdateProfilePage';
 
 const App: React.FC = () => {
@@ -22,9 +22,9 @@ const App: React.FC = () => {
           <Route path="login" element={<LoginPage />} />
           <Route path="my-page" element={<MyPage />} />
           <Route path="create-article" element={<CreateArticlePage />} />
-          <Route path="article-list" element={<ArticleListPage />} /> {/* 修正 */}
+          <Route path="article-list" element={<ArticleListPage />} />
           <Route path="articles/:articleId" element={<ArticleDetailPage />} />
-          <Route path="update-profile" element={<UpdateProfilePage />} /> {/* 会員情報変更ページ */}
+          <Route path="update-profile" element={<UpdateProfilePage />} />
         </Route>
       </Routes>
     </Router>
@@ -32,6 +32,7 @@ const App: React.FC = () => {
 };
 
 export default App;
+
 
 
 

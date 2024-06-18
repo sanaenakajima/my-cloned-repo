@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../store/store';
-import { login } from '../../store/userSlice';
+import { login, fetchUser } from '../../store/userSlice';
 import LoginFormField from '../molecules/LoginFormField';
 import LoginButton from '../molecules/LoginButton';
 import ErrorMessage from '../atoms/ErrorMessage';
@@ -18,6 +18,7 @@ const LoginForm: React.FC = () => {
   const navigate = useNavigate();
   const authStatus = useAppSelector((state) => state.user.status);
   const authError = useAppSelector((state) => state.user.errors.general);
+  const userInfo = useAppSelector((state) => state.user.userInfo);
 
   const validateEmail = (email: string): string => {
     if (!email) {
@@ -52,6 +53,7 @@ const LoginForm: React.FC = () => {
       console.log('Dispatching login with:', { email, password });
       dispatch(login({ email, password })).unwrap()
         .then(() => {
+          dispatch(fetchUser(localStorage.getItem('user_id') || '')); // ユーザー情報の取得
           navigate('/my-page');
         })
         .catch((error) => {
@@ -66,6 +68,10 @@ const LoginForm: React.FC = () => {
       setPasswordError(validatePassword(password));
     }
   }, [email, password, isSubmitted]);
+
+  useEffect(() => {
+    console.log('Current userInfo:', userInfo); // ログイン後のユーザー情報を確認
+  }, [userInfo]);
 
   const isFormValid = !emailError && !passwordError;
 
@@ -100,6 +106,4 @@ const LoginForm: React.FC = () => {
 };
 
 export default LoginForm;
-
-
 

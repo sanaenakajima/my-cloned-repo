@@ -6,12 +6,15 @@ interface Article {
   article_id: number;
   title: string;
   content: string;
+  user_name: string;
+  user_id: string;
   created_at: string;
   updated_at: string;
 }
 
 interface ArticleState {
   articles: Article[];
+  selectedArticle: Article | null;
   currentPage: number;
   totalPages: number;
   totalItems: number;
@@ -28,6 +31,7 @@ interface ArticleState {
 
 const initialState: ArticleState = {
   articles: [],
+  selectedArticle: null,
   currentPage: 1,
   totalPages: 1,
   totalItems: 0,
@@ -44,29 +48,9 @@ const initialState: ArticleState = {
 
 export const createArticle = createAsyncThunk(
   'articles/createArticle',
-  async (article: { title: string; content: string }, { rejectWithValue }) => {
-    try {
-      const response = await axios.post('http://localhost:5000/articles', article);
-
-      if (response.status !== 201) {
-        const errorMessage = `Failed with status: ${response.status}`;
-        console.error(errorMessage);
-        return rejectWithValue(errorMessage);
-      }
-
-      const data = response.data;
-      if (!data.article_id) {
-        const errorMessage = 'Invalid response format';
-        console.error(errorMessage);
-        return rejectWithValue(errorMessage);
-      }
-
-      return data;
-    } catch (error) {
-      const errorMessage = 'Failed to create article';
-      console.error(errorMessage, error);
-      return rejectWithValue(errorMessage);
-    }
+  async (articleData: { title: string; content: string; user_name: string; user_id: string }) => {
+    const response = await axios.post('http://localhost:5000/articles', articleData);
+    return response.data;
   }
 );
 
@@ -76,9 +60,40 @@ export const fetchArticles = createAsyncThunk(
     try {
       const response = await axios.get(`http://localhost:5000/articles?page=${page}`);
       return response.data;
-    } catch (error) {
-      const errorResponse = error as any;
-      throw new Error(`HTTP error! status: ${errorResponse.response?.status}`);
+    } catch (error: any) {
+      throw new Error(`HTTP error! status: ${error.response?.status}`);
+    }
+  }
+);
+
+export const fetchArticleById = createAsyncThunk(
+  'articles/fetchArticleById',
+  async (id: number) => {
+    try {
+      const response = await axios.get(`http://localhost:5000/articles/${id}`);
+      return response.data;
+    } catch (error: any) {
+      throw new Error(`HTTP error! status: ${error.response?.status}`);
+    }
+  }
+);
+
+export const updateArticle = createAsyncThunk(
+  'articles/updateArticle',
+  async (articleData: { article_id: number; title: string; content: string; user_id: string }) => {
+    const response = await axios.put(`http://localhost:5000/articles/${articleData.article_id}`, articleData);
+    return response.data;
+  }
+);
+
+export const deleteArticle = createAsyncThunk(
+  'articles/deleteArticle',
+  async (articleId: number) => {
+    const response = await axios.delete(`http://localhost:5000/articles/${articleId}`);
+    if (response.status === 204) {
+      return articleId;
+    } else {
+      throw new Error('Failed to delete article');
     }
   }
 );
@@ -102,7 +117,7 @@ const articleSlice = createSlice({
       })
       .addCase(createArticle.rejected, (state, action) => {
         state.status = 'failed';
-        state.error = action.payload as string;
+        state.error = action.error.message || 'Something went wrong';
       })
       .addCase(fetchArticles.pending, (state) => {
         state.status = 'loading';
@@ -124,17 +139,46 @@ const articleSlice = createSlice({
       .addCase(fetchArticles.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message || 'Something went wrong';
+      })
+      .addCase(fetchArticleById.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchArticleById.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.selectedArticle = action.payload;
+      })
+      .addCase(fetchArticleById.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message || 'Something went wrong';
+      })
+      .addCase(updateArticle.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(updateArticle.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.selectedArticle = action.payload;
+        state.articles = state.articles.map(article =>
+          article.article_id === action.payload.article_id ? action.payload : article
+        );
+      })
+      .addCase(updateArticle.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message || 'Something went wrong';
+      })
+      .addCase(deleteArticle.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(deleteArticle.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.articles = state.articles.filter(article => article.article_id !== action.payload);
+      })
+      .addCase(deleteArticle.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message || 'Something went wrong';
       });
-  },
+  }
 });
 
 export const { setCurrentPage } = articleSlice.actions;
 
 export default articleSlice.reducer;
-
-
-
-
-
-
-

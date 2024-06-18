@@ -15,20 +15,6 @@ const saveToLocalStorage = (key, data) => localStorage.setItem(key, JSON.stringi
 let users = loadFromLocalStorage(usersKey);
 let articles = loadFromLocalStorage(articlesKey);
 
-// テスト用のユーザーデータを追加（必要に応じて既存のデータに追加）
-const testUser = {
-  user_id: 'example-user-id',
-  name: 'リアクト太郎',
-  email: 'react.tarou@example.com',
-  password: 'password123',
-  representative_image: '' // 画像がない場合をシミュレート
-};
-
-if (!users.some(user => user.user_id === testUser.user_id)) {
-  users.push(testUser);
-  saveToLocalStorage(usersKey, users);
-}
-
 export const handlers = [
   rest.post('/user', async (req, res, ctx) => {
     const { name, email, password, password_confirmation, representative_image } = await req.json();
@@ -74,12 +60,14 @@ export const handlers = [
   }),
 
   rest.post('http://localhost:5000/articles', async (req, res, ctx) => {
-    const { title, content } = await req.json();
+    const { title, content, user_name, user_id } = await req.json();
 
     const newArticle = {
-      article_id: `article_${Date.now()}`,
+      article_id: Date.now(), // ユニークな整数IDを生成
       title,
       content,
+      user_name, // ユーザー名を利用
+      user_id, // ユーザーIDを利用
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
@@ -93,7 +81,6 @@ export const handlers = [
     );
   }),
 
-  // URLを修正して、正しいエンドポイントに一致させる
   rest.get('http://localhost:5000/articles', (req, res, ctx) => {
     const page = parseInt(req.url.searchParams.get('page')) || 1;
     const pageSize = 15;
@@ -119,7 +106,7 @@ export const handlers = [
   }),
 
   // ユーザー情報取得のハンドラーを追加
-  rest.get('/user/:userId', (req, res, ctx) => {
+  rest.get('http://localhost:3000/user/:userId', (req, res, ctx) => {
     const { userId } = req.params;
     const user = users.find(user => user.user_id === userId);
 
@@ -127,6 +114,7 @@ export const handlers = [
       return res(
         ctx.status(200),
         ctx.json({
+          user_id: user.user_id,
           name: user.name,
           email: user.email,
           representative_image: user.representative_image,
@@ -138,6 +126,73 @@ export const handlers = [
         ctx.json({ message: 'User not found' })
       );
     }
+  }),
+
+  // 記事詳細取得のハンドラーを追加
+  rest.get('http://localhost:5000/articles/:article_id', (req, res, ctx) => {
+    const { article_id } = req.params;
+    const article = articles.find(article => article.article_id === parseInt(article_id, 10));
+
+    if (article) {
+      return res(
+        ctx.status(200),
+        ctx.json(article)
+      );
+    } else {
+      return res(
+        ctx.status(404),
+        ctx.json({ message: 'Article not found' })
+      );
+    }
+  }),
+
+  // 記事更新のハンドラーを追加
+  rest.put('http://localhost:5000/articles/:article_id', async (req, res, ctx) => {
+    const { article_id } = req.params;
+    const { title, content, user_id } = await req.json();
+    const articleIndex = articles.findIndex(article => article.article_id === parseInt(article_id, 10));
+
+    if (articleIndex === -1) {
+      return res(
+        ctx.status(404),
+        ctx.json({ message: 'Article not found' })
+      );
+    }
+
+    const user = users.find(user => user.user_id === user_id);
+    if (!user) {
+      return res(
+        ctx.status(404),
+        ctx.json({ message: 'User not found' })
+      );
+    }
+
+    articles[articleIndex] = {
+      ...articles[articleIndex],
+      title,
+      content,
+      user_name: user.name, // 最新のユーザー名を更新
+      updated_at: new Date().toISOString(),
+    };
+
+    saveToLocalStorage(articlesKey, articles);
+
+    return res(
+      ctx.status(200),
+      ctx.json(articles[articleIndex])
+    );
+  }),
+
+  // 記事削除のハンドラーを追加
+  rest.delete('http://localhost:5000/articles/:article_id', (req, res, ctx) => {
+    const { article_id } = req.params;
+    articles = articles.filter(article => article.article_id !== parseInt(article_id, 10));
+
+    saveToLocalStorage(articlesKey, articles);
+
+    return res(
+      ctx.status(204)
+    );
   }),
 
   // ユーザー情報更新のハンドラーを追加
@@ -158,7 +213,7 @@ export const handlers = [
     users[userIndex] = {
       ...users[userIndex],
       email,
-      nickname,
+      name: nickname, // ニックネームをユーザー名として使用
       representative_image,
       updated_at: new Date().toISOString(),
     };
@@ -168,5 +223,8 @@ export const handlers = [
     return res(
       ctx.status(204)
     );
-  })
+  }),
 ];
+
+
+
