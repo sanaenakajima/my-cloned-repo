@@ -1,4 +1,4 @@
-//src/hooks/useAuth.ts//
+// src/hooks/useAuth.ts
 import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../store/store';
 import { logout } from '../store/userSlice';

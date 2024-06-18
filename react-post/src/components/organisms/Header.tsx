@@ -9,7 +9,7 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ isLoggedIn, onLogout }) => (
-    <header className="w-full p-4 bg-navy-800 text-white flex justify-between items-center shadow-lg">
+    <header className="fixed top-0 left-0 w-full p-4 bg-navy-800 text-white flex justify-between items-center shadow-lg z-50">
         <div className="flex justify-between items-center w-full max-w-screen-lg mx-auto">
             <div className="flex-shrink-0">
                 <Logo />
@@ -21,7 +21,8 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn, onLogout }) => (
     </header>
 );
 
-export default Header; 
+export default Header;
+
 
 
 

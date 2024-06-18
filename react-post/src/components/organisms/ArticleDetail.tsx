@@ -57,11 +57,13 @@ const ArticleDetail: React.FC<ArticleDetailProps> = ({ onEdit }) => {
 
   return (
     <div className="max-w-4xl w-full mx-auto p-6 rounded-lg shadow-md bg-white">
-      <div className="flex justify-between items-center mb-4">
+      <div className="mb-4">
         <ArticleTitle title={article.title} />
-        <ArticleAuthor authorName={user.name} />
       </div>
       <ArticleContent content={article.content} />
+      <div className="flex justify-end mt-2">
+        <ArticleAuthor authorName={user.name} />
+      </div>
       <div className="flex justify-end mt-4">
         <Button onClick={onEdit} className="mr-2 bg-navy-700 hover:bg-navy-900 text-white font-bold py-2 px-4 rounded">
           編集
@@ -75,7 +77,3 @@ const ArticleDetail: React.FC<ArticleDetailProps> = ({ onEdit }) => {
 };
 
 export default ArticleDetail;
-
-
-
-

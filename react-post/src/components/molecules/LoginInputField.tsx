@@ -4,7 +4,7 @@ import InputField from '../atoms/InputField';
 
 interface LoginInputFieldProps {
   label: string;
-  type: React.HTMLInputTypeAttribute; // 必須に設定
+  type: React.HTMLInputTypeAttribute;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   error: string;

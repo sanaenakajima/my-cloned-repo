@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState, useAppDispatch } from '../../store/store';
 import RegisterFormFields from '../molecules/RegisterFormFields';
-import { setEmail, setPassword, setPasswordConfirm, setNickname, setUserIcon, setErrors, register } from '../../store/userSlice';
+import { setUserIcon, setErrors, register } from '../../store/userSlice';
 import { PayloadAction } from '@reduxjs/toolkit';
 import Button from '../atoms/Button';
 import Title from '../atoms/Title';

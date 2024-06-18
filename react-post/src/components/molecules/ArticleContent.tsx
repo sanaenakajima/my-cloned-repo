@@ -7,7 +7,7 @@ interface ArticleContentProps {
 }
 
 const ArticleContent: React.FC<ArticleContentProps> = ({ content }) => {
-  return <Text text={content} className="text-gray-800 mt-4" />;
+  return <Text text={content} className="text-gray-800 mt-4 break-words" />;
 };
 
 export default ArticleContent;

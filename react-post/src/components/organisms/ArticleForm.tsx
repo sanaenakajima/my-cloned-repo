@@ -50,7 +50,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ mode, initialTitle = '', init
   };
 
   return (
-    <form onSubmit={handleSubmit} className="form-container w-full max-w-2xl mx-auto">
+    <form onSubmit={handleSubmit} className="form-container w-full max-w-2xl mx-auto ">
       <ArticleFormFields
         title={title}
         content={content}

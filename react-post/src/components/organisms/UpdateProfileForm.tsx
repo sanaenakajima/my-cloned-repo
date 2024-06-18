@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState, useAppDispatch } from '../../store/store';
-import { setEmail, setNickname, setUserIcon, setErrors, updateUser } from '../../store/userSlice';
+import { setUserIcon, setErrors, updateUser } from '../../store/userSlice';
 import { PayloadAction } from '@reduxjs/toolkit';
 import { useNavigate } from 'react-router-dom';
 import Button from '../atoms/Button';

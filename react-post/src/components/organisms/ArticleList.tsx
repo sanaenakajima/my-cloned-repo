@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../../store/store';
 import { fetchArticles, setCurrentPage } from '../../store/articleSlice';
 import { useNavigate } from 'react-router-dom';
-import ArticleSummary from '../molecules/ArticleSummary';
+import ArticleListItem from '../molecules/ArticleListItem';
 import Pagination from '../molecules/Pagination';
 import LoadingSpinner from '../atoms/LoadingSpinner';
 
@@ -17,8 +17,7 @@ const ArticleList: React.FC = () => {
     totalPages, 
     status, 
     error, 
-    totalItems, 
-    perPage, 
+    totalItems,  
     from, 
     to, 
     firstPageUrl, 
@@ -62,14 +61,11 @@ const ArticleList: React.FC = () => {
               <div className="py-2 px-4">投稿内容</div>
             </div>
             {articles.map((article) => (
-              <div 
+              <ArticleListItem 
                 key={article.article_id} 
-                className="grid grid-cols-2 border-b border-gray-200 p-4 hover:bg-gray-50 cursor-pointer transition-colors"
-                onClick={() => handleArticleClick(article.article_id)}
-              >
-                <div className="py-2 px-4 font-bold">{article.title}</div>
-                <div className="py-2 px-4 text-gray-700">{article.content}</div>
-              </div>
+                article={article} 
+                onClick={handleArticleClick}
+              />
             ))}
           </div>
           <div className="mt-8">
@@ -90,3 +86,4 @@ const ArticleList: React.FC = () => {
 };
 
 export default ArticleList;
+
