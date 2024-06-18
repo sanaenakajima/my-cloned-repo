@@ -7,6 +7,7 @@ import RegisterFormFields from '../molecules/RegisterFormFields';
 import { setEmail, setPassword, setPasswordConfirm, setNickname, setUserIcon, setErrors, register } from '../../store/userSlice';
 import { PayloadAction } from '@reduxjs/toolkit';
 import Button from '../atoms/Button';
+import Title from '../atoms/Title';
 
 const RegisterForm: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -20,7 +21,7 @@ const RegisterForm: React.FC = () => {
     if (isSubmitted) {
       validateForm();
     }
-  }, [email, password, passwordConfirm, nickname, userIcon]);
+  }, [email, password, passwordConfirm, nickname, userIcon, isSubmitted]);
 
   const handleFileChange = (base64: string | null, fileName: string | null) => {
     setImagePreviewUrl(base64);
@@ -123,7 +124,7 @@ const RegisterForm: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-start pt-20">
       <div className="w-full max-w-lg text-center p-6">
-        <h1 className="text-2xl tablet:text-4xl laptop:text-5xl font-bold mb-7 text-navy-800">会員登録</h1>
+        <Title text="会員登録" className="mb-7" />
         <RegisterFormFields
           email={email}
           password={password}

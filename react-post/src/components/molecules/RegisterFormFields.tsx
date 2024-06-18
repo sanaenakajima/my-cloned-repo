@@ -42,7 +42,7 @@ const RegisterFormFields: React.FC<RegisterFormFieldsProps> = ({
         value={email}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => onFieldChange(e, setEmail)}
         error={errors.email}
-        className="mb-6"
+        className="mb-6 mt-10"
       />
       <InputField
         label="パスワード（英数8文字以上）"

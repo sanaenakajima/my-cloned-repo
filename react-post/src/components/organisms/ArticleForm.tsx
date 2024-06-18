@@ -1,5 +1,4 @@
-// src/components/organisms/ArticleForm.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../store/store';
 import { createArticle, updateArticle } from '../../store/articleSlice';
@@ -24,10 +23,6 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ mode, initialTitle = '', init
   const navigate = useNavigate();
   const user = useAppSelector((state) => state.user.userInfo);
 
-  useEffect(() => {
-    console.log('Current user in ArticleForm:', user);
-  }, [user]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitError(null);
@@ -45,20 +40,17 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ mode, initialTitle = '', init
           user_name: user.name, 
           user_id: user.user_id 
         })).unwrap();
-        console.log('Article created successfully:', response);
         navigate(`/articles/${response.article_id}`);
       } else if (mode === 'edit' && articleId) {
         await onSave?.({ title, content, article_id: articleId });
       }
     } catch (error) {
-      console.error('Article submission failed:', error);
       setSubmitError('記事の作成に失敗しました。もう一度お試しください。');
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="form-container">
-      <h1 className="text-2xl font-bold mb-10 text-center">{mode === 'create' ? '新規投稿画面' : '記事編集画面'}</h1>
+    <form onSubmit={handleSubmit} className="form-container w-full max-w-2xl mx-auto">
       <ArticleFormFields
         title={title}
         content={content}
@@ -86,5 +78,6 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ mode, initialTitle = '', init
 };
 
 export default ArticleForm;
+
 
 

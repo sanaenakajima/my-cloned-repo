@@ -50,7 +50,6 @@ const LoginForm: React.FC = () => {
     setPasswordError(passwordValidationError);
 
     if (!emailValidationError && !passwordValidationError) {
-      console.log('Dispatching login with:', { email, password });
       dispatch(login({ email, password })).unwrap()
         .then(() => {
           dispatch(fetchUser(localStorage.getItem('user_id') || '')); // ユーザー情報の取得
@@ -69,15 +68,11 @@ const LoginForm: React.FC = () => {
     }
   }, [email, password, isSubmitted]);
 
-  useEffect(() => {
-    console.log('Current userInfo:', userInfo); // ログイン後のユーザー情報を確認
-  }, [userInfo]);
-
   const isFormValid = !emailError && !passwordError;
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="mb-6">
+      <div className="mb-6 mt-10">
         <LoginFormField
           label="ログインID（メールアドレス）"
           type="email"
@@ -106,4 +101,3 @@ const LoginForm: React.FC = () => {
 };
 
 export default LoginForm;
-

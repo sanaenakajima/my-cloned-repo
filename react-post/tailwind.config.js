@@ -1,5 +1,4 @@
 /** @type {import('tailwindcss').Config} */
-// tailwind.config.js
 module.exports = {
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
@@ -28,8 +27,18 @@ module.exports = {
         'tablet': '600px',
         'laptop': '1025px',
       },
+      keyframes: {
+        bounce: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-10px)' },
+        },
+      },
+      animation: {
+        bounce: 'bounce 1.5s infinite',
+      },
     },
   },
   plugins: [],
 }
+
 

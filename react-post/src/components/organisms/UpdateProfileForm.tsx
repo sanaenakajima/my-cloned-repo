@@ -104,7 +104,7 @@ const UpdateProfileForm: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-start pt-20">
-      <Title text="会員情報変更" className="mb-8 text-center" />
+      <Title text="会員情報変更" className="mb-8" />
       <div className="w-full max-w-lg text-center p-6">
         {message && <p className="mb-4 text-red-600">{message}</p>}
         <UpdateProfileFormFields

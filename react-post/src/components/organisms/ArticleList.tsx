@@ -46,7 +46,11 @@ const ArticleList: React.FC = () => {
           <LoadingSpinner />
         </div>
       )}
-      {status === 'failed' && <div className="text-red-500">Error: {error}</div>}
+      {status === 'failed' && (
+        <div className="text-red-500">
+          エラー: {error}
+        </div>
+      )}
       {status === 'succeeded' && (
         <div className="container mx-auto p-4 max-w-screen-lg">
           <div className="text-center mb-4">
@@ -57,21 +61,16 @@ const ArticleList: React.FC = () => {
               <div className="py-2 px-4">タイトル</div>
               <div className="py-2 px-4">投稿内容</div>
             </div>
-            {articles.map((article) => {
-              if (article.article_id == null) {
-                console.error("記事IDがnullです:", article);
-              }
-              return (
-                <div 
-                  key={article.article_id} 
-                  className="grid grid-cols-2 border-b border-gray-200 p-4 hover:bg-gray-50 cursor-pointer transition-colors"
-                  onClick={() => handleArticleClick(article.article_id)}
-                >
-                  <div className="py-2 px-4 font-bold">{article.title}</div>
-                  <div className="py-2 px-4 text-gray-700">{article.content}</div>
-                </div>
-              );
-            })}
+            {articles.map((article) => (
+              <div 
+                key={article.article_id} 
+                className="grid grid-cols-2 border-b border-gray-200 p-4 hover:bg-gray-50 cursor-pointer transition-colors"
+                onClick={() => handleArticleClick(article.article_id)}
+              >
+                <div className="py-2 px-4 font-bold">{article.title}</div>
+                <div className="py-2 px-4 text-gray-700">{article.content}</div>
+              </div>
+            ))}
           </div>
           <div className="mt-8">
             <Pagination 
@@ -91,18 +90,3 @@ const ArticleList: React.FC = () => {
 };
 
 export default ArticleList;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
