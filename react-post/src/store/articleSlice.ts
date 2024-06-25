@@ -182,3 +182,4 @@ const articleSlice = createSlice({
 export const { setCurrentPage } = articleSlice.actions;
 
 export default articleSlice.reducer;
+export type { ArticleState }; 

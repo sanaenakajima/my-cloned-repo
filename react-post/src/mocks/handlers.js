@@ -18,7 +18,7 @@ let articles = loadFromLocalStorage(articlesKey);
 export const handlers = [
   rest.post('/user', async (req, res, ctx) => {
     const { name, email, password, password_confirmation, representative_image } = await req.json();
-
+  
     const newUser = {
       user_id: `user_${Date.now()}`,
       name,
@@ -30,15 +30,15 @@ export const handlers = [
       representative_image,
       token: `token_${Date.now()}`
     };
-
+  
     users.push(newUser);
     saveToLocalStorage(usersKey, users);
-
+  
     return res(
       ctx.status(201),
       ctx.json(newUser)
     );
-  }),
+  }),  
 
   rest.post('/login', async (req, res, ctx) => {
     const { email, password } = await req.json();

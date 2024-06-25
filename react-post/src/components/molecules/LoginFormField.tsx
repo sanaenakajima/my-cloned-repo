@@ -10,17 +10,22 @@ interface LoginFormFieldProps {
   error: string;
 }
 
-const LoginFormField: React.FC<LoginFormFieldProps> = ({ label, type, value, onChange, error }) => (
-  <div className="mb-6">
-    <InputField
-      label={label}
-      type={type}
-      value={value}
-      onChange={onChange}
-      error={error}
-    />
-  </div>
-);
+const LoginFormField: React.FC<LoginFormFieldProps> = ({ label, type, value, onChange, error }) => {
+  const id = `login-${type}`;
+
+  return (
+    <div className="mb-6">
+      <InputField
+        id={id} 
+        label={label}
+        type={type}
+        value={value}
+        onChange={onChange}
+        error={error}
+      />
+    </div>
+  );
+};
 
 export default LoginFormField;
 

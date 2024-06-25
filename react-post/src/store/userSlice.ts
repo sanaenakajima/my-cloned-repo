@@ -2,7 +2,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-interface UserState {
+export interface UserState {
   email: string;
   password: string;
   passwordConfirm: string;
@@ -25,6 +25,7 @@ interface UserState {
     email: string;
     representative_image: string;
   } | null;
+  isLoggedIn: boolean; // ここを追加
 }
 
 const initialState: UserState = {
@@ -45,7 +46,9 @@ const initialState: UserState = {
     general: ''
   },
   userInfo: localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')!) : null,
+  isLoggedIn: Boolean(localStorage.getItem('access_token') && Date.now() <= Number(localStorage.getItem('token_expiry'))) // ここを追加
 };
+
 
 export const register = createAsyncThunk(
   'user/register',
@@ -56,9 +59,11 @@ export const register = createAsyncThunk(
       const tokenExpiry = Date.now() + 60 * 60 * 1000; // 60分後
       localStorage.setItem('access_token', data.token);
       localStorage.setItem('token_expiry', tokenExpiry.toString());
+      localStorage.setItem('user_id', data.user_id); // ユーザーIDを保存
 
-      dispatch(login({ email: userData.email, password: userData.password }));
-
+      // ログインアクションの代わりに、直接トークンと認証情報を設定
+      dispatch(setToken({ token: data.token, tokenExpiry }));
+      dispatch(setAuthenticated(true));
       return data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
@@ -158,10 +163,18 @@ const userSlice = createSlice({
     logout: (state) => {
       state.token = null;
       state.tokenExpiry = null;
+      state.isLoggedIn = false;
       localStorage.removeItem('access_token');
       localStorage.removeItem('token_expiry');
       localStorage.removeItem('userInfo');
     },
+    setToken: (state, action: PayloadAction<{ token: string; tokenExpiry: number }>) => {
+      state.token = action.payload.token;
+      state.tokenExpiry = action.payload.tokenExpiry;
+    },
+    setAuthenticated: (state, action: PayloadAction<boolean>) => {
+      state.isLoggedIn = action.payload;
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -220,8 +233,5 @@ const userSlice = createSlice({
   }
 });
 
-export const { setEmail, setPassword, setPasswordConfirm, setNickname, setUserIcon, setErrors, clearErrors, logout } = userSlice.actions;
+export const { setEmail, setPassword, setPasswordConfirm, setNickname, setUserIcon, setErrors, clearErrors, logout, setToken, setAuthenticated } = userSlice.actions;
 export default userSlice.reducer;
-
-
-

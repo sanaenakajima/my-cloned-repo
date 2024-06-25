@@ -1,7 +1,7 @@
 // src/App.tsx
 import './App.css';
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import TopPage from './pages/TopPage';
 import RegisterPage from './pages/RegisterPage';
@@ -20,9 +20,9 @@ const App: React.FC = () => {
   const [error, setError] = useState<any>(null);
 
   return (
-    <Router>
-      <Header isLoggedIn={true} onLogout={() => {}} /> 
-      <div className="pt-16"> 
+    <>
+      <Header isLoggedIn={true} onLogout={() => {}} />
+      <div className="pt-16">
         {error && <ErrorBoundary error={error} />}
         <Routes>
           <Route path="/" element={<HeaderLayout />}>
@@ -40,11 +40,12 @@ const App: React.FC = () => {
           </Route>
         </Routes>
       </div>
-    </Router>
+    </>
   );
 };
 
 export default App;
+
 
 
 

@@ -43,6 +43,7 @@ const RegisterFormFields: React.FC<RegisterFormFieldsProps> = ({
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => onFieldChange(e, setEmail)}
         error={errors.email}
         className="mb-6 mt-10"
+        id="email"
       />
       <InputField
         label="パスワード（英数8文字以上）"
@@ -51,6 +52,7 @@ const RegisterFormFields: React.FC<RegisterFormFieldsProps> = ({
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => onFieldChange(e, setPassword)}
         error={errors.password}
         className="mb-6"
+        id="password"
       />
       <InputField
         label="パスワード確認"
@@ -59,6 +61,7 @@ const RegisterFormFields: React.FC<RegisterFormFieldsProps> = ({
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => onFieldChange(e, setPasswordConfirm)}
         error={errors.passwordConfirm}
         className="mb-6"
+        id="passwordConfirm"
       />
       <InputField
         label="ニックネーム（8文字以上）"
@@ -67,6 +70,7 @@ const RegisterFormFields: React.FC<RegisterFormFieldsProps> = ({
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => onFieldChange(e, setNickname)}
         error={errors.nickname}
         className="mb-6"
+        id="nickname"
       />
       <FileUploadButton
         onFileSelect={(base64, fileName) => onFileChange(base64, fileName)}
@@ -79,5 +83,3 @@ const RegisterFormFields: React.FC<RegisterFormFieldsProps> = ({
 };
 
 export default RegisterFormFields;
-
-

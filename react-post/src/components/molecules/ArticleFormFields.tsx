@@ -21,6 +21,7 @@ const ArticleFormFields: React.FC<ArticleFormFieldsProps> = ({ title, content, o
         className="mb-6 title-input"
       />
       <TextAreaField
+        id="content"
         label="投稿内容"
         name="content"
         value={content}

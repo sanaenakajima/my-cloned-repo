@@ -46,7 +46,7 @@ const RegisterForm: React.FC = () => {
       general: ''
     };
     let isValid = true;
-
+  
     if (!email) {
       newErrors.email = '入力してください';
       isValid = false;
@@ -54,7 +54,7 @@ const RegisterForm: React.FC = () => {
       newErrors.email = 'メールアドレスの形式が正しくありません';
       isValid = false;
     }
-
+  
     if (!password) {
       newErrors.password = '入力してください';
       isValid = false;
@@ -62,7 +62,7 @@ const RegisterForm: React.FC = () => {
       newErrors.password = '8文字以上で入力してください';
       isValid = false;
     }
-
+  
     if (!passwordConfirm) {
       newErrors.passwordConfirm = '入力してください';
       isValid = false;
@@ -73,7 +73,7 @@ const RegisterForm: React.FC = () => {
       newErrors.passwordConfirm = '8文字以上で入力してください';
       isValid = false;
     }
-
+  
     if (!nickname) {
       newErrors.nickname = '入力してください';
       isValid = false;
@@ -81,17 +81,18 @@ const RegisterForm: React.FC = () => {
       newErrors.nickname = '8文字以上で入力してください';
       isValid = false;
     }
-
+  
     if (userIcon && !userIcon.startsWith('data:image/jpeg')) {
       newErrors.userIcon = '.jpg形式のファイルを選択してください';
       isValid = false;
     }
-
+  
+    console.log('Validation errors:', newErrors);
     dispatch(setErrors(newErrors));
     setIsFormValid(isValid);
     return isValid;
   };
-
+  
   const handleRegister = async () => {
     setIsSubmitted(true);
     if (!validateForm()) {
@@ -105,14 +106,14 @@ const RegisterForm: React.FC = () => {
       representative_image: userIcon ? userIcon.split(',')[1] : ''
     };
     console.log('Registering user:', userData);
-
+  
     try {
-      await dispatch(register(userData)).unwrap();
-      navigate('/my-page'); // 会員登録後にマイページに遷移
+      const result = await dispatch(register(userData)).unwrap();
+      navigate('/my-page'); // トークンと認証状態が更新された後にナビゲート
     } catch (err) {
       console.error('Registration failed:', err);
     }
-  };
+  };  
 
   const handleFieldChange = (e: React.ChangeEvent<HTMLInputElement>, action: (value: string) => PayloadAction<string>) => {
     dispatch(action(e.target.value));

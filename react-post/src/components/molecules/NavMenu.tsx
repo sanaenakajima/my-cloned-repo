@@ -61,22 +61,3 @@ const NavMenu: React.FC<NavMenuProps> = ({ isLoggedIn, onLogout }) => {
 };
 
 export default NavMenu;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
