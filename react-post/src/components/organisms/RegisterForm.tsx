@@ -105,14 +105,14 @@ const RegisterForm: React.FC = () => {
       representative_image: userIcon ? userIcon.split(',')[1] : ''
     };
     console.log('Registering user:', userData);
-
+  
     try {
-      await dispatch(register(userData)).unwrap();
-      navigate('/my-page'); // 会員登録後にマイページに遷移
+      const result = await dispatch(register(userData)).unwrap();
+      navigate('/my-page'); // トークンと認証状態が更新された後にナビゲート
     } catch (err) {
       console.error('Registration failed:', err);
     }
-  };
+  };  
 
   const handleFieldChange = (e: React.ChangeEvent<HTMLInputElement>, action: (value: string) => PayloadAction<string>) => {
     dispatch(action(e.target.value));

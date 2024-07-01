@@ -18,7 +18,7 @@ let articles = loadFromLocalStorage(articlesKey);
 export const handlers = [
   rest.post('/user', async (req, res, ctx) => {
     const { name, email, password, password_confirmation, representative_image } = await req.json();
-
+  
     const newUser = {
       user_id: `user_${Date.now()}`,
       name,
@@ -28,17 +28,18 @@ export const handlers = [
       updated_at: new Date().toISOString(),
       deleted_at: null,
       representative_image,
-      token: `token_${Date.now()}`
+      token: `token_${Date.now()}`,
+      tokenExpiry: Date.now() + 3600 * 1000 // 1時間後の有効期限
     };
-
+  
     users.push(newUser);
     saveToLocalStorage(usersKey, users);
-
+  
     return res(
       ctx.status(201),
       ctx.json(newUser)
     );
-  }),
+  }),  
 
   rest.post('/login', async (req, res, ctx) => {
     const { email, password } = await req.json();
@@ -225,6 +226,3 @@ export const handlers = [
     );
   }),
 ];
-
-
-
