@@ -1,4 +1,4 @@
-//src/components/molecules/UpdateProfileFormFields
+// src/components/molecules/UpdateProfileFormFields.tsx
 import React from 'react';
 import { PayloadAction } from '@reduxjs/toolkit';
 import InputField from '../atoms/InputField';

@@ -7,11 +7,12 @@ type TextAreaFieldProps = React.TextareaHTMLAttributes<HTMLTextAreaElement> & {
   error?: string;
 };
 
-const TextAreaField: React.FC<TextAreaFieldProps> = ({ label, error, className, ...props }) => {
+const TextAreaField: React.FC<TextAreaFieldProps> = ({ label, error, id, className, ...props }) => {
   return (
     <div className={`textarea-field ${className}`}>
-      <label className="block text-gray-700 text-sm text-left font-bold mb-2">{label}</label>
+      <label htmlFor={id} className="block text-gray-700 text-sm text-left font-bold mb-2">{label}</label>
       <textarea
+        id={id}
         className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${error && 'border-red-500'}`}
         {...props}
         style={{ minHeight: '200px' }} 
@@ -22,6 +23,7 @@ const TextAreaField: React.FC<TextAreaFieldProps> = ({ label, error, className, 
 };
 
 export default TextAreaField;
+
 
 
 

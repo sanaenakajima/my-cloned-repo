@@ -49,6 +49,7 @@ const initialState: UserState = {
   isLoggedIn: Boolean(localStorage.getItem('access_token') && Date.now() <= Number(localStorage.getItem('token_expiry'))) // ここを追加
 };
 
+
 export const register = createAsyncThunk(
   'user/register',
   async (userData: { name: string; email: string; password: string; password_confirmation: string; representative_image: string }, { dispatch }) => {
@@ -163,7 +164,11 @@ const userSlice = createSlice({
     logout: (state) => {
       state.token = null;
       state.tokenExpiry = null;
+<<<<<<< HEAD
       state.isLoggedIn = false; // ここを追加
+=======
+      state.isLoggedIn = false;
+>>>>>>> d0e0237ea9777a3c4bc66ecf7eeb662934164735
       localStorage.removeItem('access_token');
       localStorage.removeItem('token_expiry');
       localStorage.removeItem('userInfo');

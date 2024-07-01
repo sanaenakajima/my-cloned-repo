@@ -1,8 +1,12 @@
 // src/App.tsx
 import './App.css';
 import React, { useState } from 'react';
+<<<<<<< HEAD
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
+=======
+import { Routes, Route } from 'react-router-dom';
+>>>>>>> d0e0237ea9777a3c4bc66ecf7eeb662934164735
 import LoginPage from './pages/LoginPage';
 import TopPage from './pages/TopPage';
 import RegisterPage from './pages/RegisterPage';
@@ -21,13 +25,19 @@ const App: React.FC = () => {
   const [error, setError] = useState<any>(null);
 
   return (
+<<<<<<< HEAD
     <Router>
       <Header isLoggedIn={true} onLogout={() => {}} /> 
       <div className="pt-24"> 
+=======
+    <>
+      <Header isLoggedIn={true} onLogout={() => {}} />
+      <div className="pt-16">
+>>>>>>> d0e0237ea9777a3c4bc66ecf7eeb662934164735
         {error && <ErrorBoundary error={error} />}
         <AppRoutes />
       </div>
-    </Router>
+    </>
   );
 };
 
@@ -73,3 +83,17 @@ const AnimatedPage: React.FC<AnimatedPageProps> = ({ component: Component }) => 
 };
 
 export default App;
+<<<<<<< HEAD
+=======
+
+
+
+
+
+
+
+
+
+
+
+>>>>>>> d0e0237ea9777a3c4bc66ecf7eeb662934164735
