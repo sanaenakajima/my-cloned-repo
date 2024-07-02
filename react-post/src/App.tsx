@@ -1,7 +1,7 @@
 // src/App.tsx
 import './App.css';
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import LoginPage from './pages/LoginPage';
 import TopPage from './pages/TopPage';
@@ -21,13 +21,13 @@ const App: React.FC = () => {
   const [error, setError] = useState<any>(null);
 
   return (
-    <Router>
+    <>
       <Header isLoggedIn={true} onLogout={() => {}} /> 
       <div className="pt-24"> 
         {error && <ErrorBoundary error={error} />}
         <AppRoutes />
       </div>
-    </Router> 
+    </>
   );
 };
 
