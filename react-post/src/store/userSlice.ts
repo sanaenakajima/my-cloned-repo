@@ -164,11 +164,7 @@ const userSlice = createSlice({
     logout: (state) => {
       state.token = null;
       state.tokenExpiry = null;
-<<<<<<< HEAD
       state.isLoggedIn = false; // ここを追加
-=======
-      state.isLoggedIn = false;
->>>>>>> d0e0237ea9777a3c4bc66ecf7eeb662934164735
       localStorage.removeItem('access_token');
       localStorage.removeItem('token_expiry');
       localStorage.removeItem('userInfo');

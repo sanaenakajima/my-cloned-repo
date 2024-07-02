@@ -6,11 +6,8 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { Provider } from 'react-redux';
 import { store } from './store/store';
-<<<<<<< HEAD
-import { MockedRequest, RequestHandler, SetupWorkerApi } from 'msw';
-=======
-import { BrowserRouter as Router } from 'react-router-dom'; // BrowserRouterをインポート
->>>>>>> d0e0237ea9777a3c4bc66ecf7eeb662934164735
+import { BrowserRouter as Router } from 'react-router-dom';
+import { SetupWorkerApi, MockedRequest } from 'msw'; // 追加
 
 if (process.env.NODE_ENV === 'development') {
   const { worker } = require('./mocks/browser') as { worker: SetupWorkerApi };
@@ -35,7 +32,7 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <Router> {/* Routerでラップ */}
+      <Router>
         <App />
       </Router>
     </Provider>
