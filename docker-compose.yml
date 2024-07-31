@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: mydatabase
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: apppassword
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - mynetwork
+    hostname: db
+
+  backend:
+    build: ./backend
+    environment:
+      DB_HOST: db
+      DB_USER: appuser
+      DB_PASSWORD: apppassword
+      DB_NAME: mydatabase
+      JWT_SECRET: your_secret_key_here
+    depends_on:
+      - db
+    networks:
+      - mynetwork
+    ports:
+      - "5000:5000"
+    hostname: api
+
+  frontend:
+    build: .
+    environment:
+      REACT_APP_API_URL: http://localhost:5000
+    depends_on:
+      - backend
+    networks:
+      - mynetwork
+    ports:
+      - "3000:3000"
+    hostname: frontend
+
+networks:
+  mynetwork:
+    driver: bridge

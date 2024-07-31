@@ -1,0 +1,108 @@
+/* 既存のCSS */
+
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* ハンバーガーメニューアニメーション */
+.CustomIconButton .MuiSvgIcon-root {
+  transition: transform 0.3s ease-in-out;
+}
+
+.CustomIconButton.open .MuiSvgIcon-root {
+  transform: rotate(45deg);
+}
+
+/* メニュー項目ボタンのホバーアンダーバー */
+.ListItem-button:hover {
+  text-decoration: underline;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 599px) {
+  /* スマホ */
+  .App-header {
+    font-size: 14px; /* 必要に応じて調整 */
+  }
+  .App-logo {
+    height: 30vmin;
+  }
+}
+
+@media (min-width: 600px) and (max-width: 1024px) {
+  /* タブレット */
+  .App-header {
+    font-size: 18px; /* 必要に応じて調整 */
+  }
+  .App-logo {
+    height: 35vmin;
+  }
+}
+
+@media (min-width: 1025px) {
+  /* PC */
+  .App-header {
+    font-size: 24px; /* 必要に応じて調整 */
+  }
+  .App-logo {
+    height: 40vmin;
+  }
+}
+
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
